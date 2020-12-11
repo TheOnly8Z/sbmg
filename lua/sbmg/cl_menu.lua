@@ -194,49 +194,38 @@ list.Set( "DesktopWindows", "SBMG", {
         interrupt:SetFont("Futura_24")
 
         local top = vgui.Create("DPanel", window)
-        top:SetSize(window:GetWide() * 7, window:GetTall() * 0.3)
+        top:SetSize(window:GetWide() * 0.7, window:GetTall() * 0.3)
         top:Dock(TOP)
         top:DockMargin(2, 2, 2, 2)
 
+        local toplayout = vgui.Create("DIconLayout", top)
+        toplayout:Dock(FILL)
+        toplayout:SetLayoutDir(LEFT)
+
         local plys, teams
 
-        local check_ply = vgui.Create("DLabel", top)
-        check_ply:SetSize(top:GetWide() * 0.3, top:GetTall() * 0.2)
-        check_ply:SetPos(4, top:GetTall() * 0.1)
-        check_ply:SetText("")
-        check_ply.Paint = function(pnl, w, h)
+        local check_min = vgui.Create("DPanel", toplayout)
+        check_min:SetSize(top:GetWide() * 0.5, top:GetTall() / 3 * 2)
+        check_min.Paint = function(pnl, w, h)
             local _, data = gamebox:GetSelected()
+            if data and start:GetDisabled() then
+                draw.RoundedBox(2, 0, 0, w, h, Color(255, 0, 0, math.abs(math.sin(SysTime() * 2) ) * 40 + 20))
+            end
             if data and plys then
                 local text = string.format(language.GetPhrase("sbmg.min.players"), table.Count(plys), SBMG.Minigames[data].MinPlayers or 0)
-                draw.SimpleText(text, "Futura_24", 20, 0, Color(0, 0, 0), TEXT_ALIGN_LEFT)
+                draw.SimpleText(text, "Futura_24", 24, 0, Color(0, 0, 0), TEXT_ALIGN_LEFT)
                 surface.SetDrawColor( 255, 255, 255, 255 )
                 surface.SetMaterial((SBMG.Minigames[data].MinPlayers or 0) > table.Count(plys) and cross or tick)
-                surface.DrawTexturedRect( 0, 4, 16, 16 )
+                surface.DrawTexturedRect( 4, 4, 16, 16 )
             end
-        end
-
-        local check_team = vgui.Create("DLabel", top)
-        check_team:SetSize(top:GetWide() * 0.3, top:GetTall() * 0.2)
-        check_team:SetPos(4, top:GetTall() * 0.3 + 8)
-        check_team:SetText("")
-        check_team.Paint = function(pnl, w, h)
-            local _, data = gamebox:GetSelected()
             if data and teams then
                 local text = string.format(language.GetPhrase("sbmg.min.teams"), table.Count(teams), SBMG.Minigames[data].MinTeams or 0)
-                draw.SimpleText(text, "Futura_24", 20, 0, Color(0, 0, 0), TEXT_ALIGN_LEFT)
+                draw.SimpleText(text, "Futura_24", 24, check_min:GetTall() / 3 + 4, Color(0, 0, 0), TEXT_ALIGN_LEFT)
                 surface.SetDrawColor(255, 255, 255, 255)
                 surface.SetMaterial((SBMG.Minigames[data].MinTeams or 0) > table.Count(teams) and cross or tick)
-                surface.DrawTexturedRect( 0, 4, 16, 16 )
-            end
-        end
+                surface.DrawTexturedRect( 4, check_min:GetTall() / 3 + 8, 16, 16 )
 
-        local active_teams = vgui.Create("DPanel", top)
-        active_teams:SetSize(top:GetWide() * 0.3, top:GetTall() * 0.2)
-        active_teams:SetPos(8, top:GetTall() * 0.6 + 8)
-        active_teams.Paint = function(pnl, w, h)
-            local _, data = gamebox:GetSelected()
-            if data and teams then
-                local x = 0
+                local x = 4
                 for i = SBTM_RED, SBTM_YEL do
                     local clr = team.GetColor(i)
                     if table.HasValue(teams, i) then
@@ -246,10 +235,10 @@ list.Set( "DesktopWindows", "SBMG", {
                         clr.a = 150
                     end
                     surface.SetMaterial(SBMG.FlagMaterials[i])
-                    surface.DrawTexturedRect( x, 0, 16, 16 )
+                    surface.DrawTexturedRect( x, check_min:GetTall() / 3 * 2 + 8, 16, 16 )
                     local c = 0
                     for _, v in pairs(plys) do if v:Team() == i then c = c + 1 end end
-                    draw.SimpleTextOutlined(c, "Futura_18", x + 16, 0, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 150))
+                    draw.SimpleTextOutlined(c, "Futura_18", x + 16, check_min:GetTall() / 3 * 2 + 8, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 150))
                     x = x + 36
                 end
             end
