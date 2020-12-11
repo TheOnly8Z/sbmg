@@ -139,12 +139,16 @@ list.Set( "DesktopWindows", "SBMG", {
             if data then
                 local output = {}
                 for k, v in pairs(options) do
-                    print(v:GetClassName())
                     if v.GetChecked then
                         output[k] = v:GetChecked()
                     else
                         output[k] = v:GetValue()
                     end
+                end
+
+                if SBMG.Minigames[data].CanStart then
+                    local can, message = SBMG.Minigames[data]:CanStart(output)
+                    if not can then Derma_Message(language.GetPhrase(message), language.GetPhrase("sbmg.title"), "OK") return end
                 end
 
                 -- Save this to a file of the local player so we can auto-load it next time

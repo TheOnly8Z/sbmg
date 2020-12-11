@@ -34,6 +34,8 @@ function SBMG:MinigameStart(name, options)
 
     SBMG:ValidateOptions(options, name)
 
+    if SBMG.Minigames[name].CanStart and not SBMG.Minigames[name]:CanStart(options) then return end
+
     SBMG.ActiveGame.Name = name
     SBMG.ActiveGame.Options = options
     SBMG.ActiveGame.StartTime = CurTime()

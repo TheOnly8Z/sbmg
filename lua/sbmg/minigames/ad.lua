@@ -32,6 +32,12 @@ function MINIGAME:GetParticipants()
     return plys, {SBTM_RED, SBTM_BLU}
 end
 
+function MINIGAME:CanStart(options)
+    if table.Count(ents.FindByClass("sbmg_point")) < options["score_to_win"] then
+        return false, "#sbmg.score_over_points"
+    end
+end
+
 function MINIGAME:GameStart()
     local points = ents.FindByClass("sbmg_point")
     if SERVER then
