@@ -41,11 +41,18 @@ if SERVER then
     end
 
     function ENT:Initialize()
-        self:SetModel("models/props_interiors/Furniture_Lamp01a.mdl")
+        if GetConVar("sbmg_obj_simple"):GetBool() then
+            self:SetModel("models/props_interiors/Furniture_Lamp01a.mdl")
+            self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+        else
+            self:SetModel("models/props_sbmg/control.mdl")
+            self:SetCollisionGroup(COLLISION_GROUP_NONE)
+        end
         self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_NONE)
-        self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
         self:SetUseType(SIMPLE_USE)
+        if not GetConVar("sbmg_obj_physics"):GetBool() then
+            self:SetMoveType(MOVETYPE_NONE)
+        end
         if self:GetTeam() == 0 then self:SetTeam(TEAM_UNASSIGNED) end
         if self:GetRadius() <= 0 then self:SetRadius(256) end
         if self:GetCaptureDuration() <= 0 then self:SetCaptureDuration(10) end
@@ -147,7 +154,10 @@ elseif CLIENT then
                 local angle = ent:GetAngles()
                 local mins, maxs = ent:WorldSpaceAABB()
                 local flipteam = ent:GetTeam() == TEAM_UNASSIGNED or SBMG:GameHasTag(SBMG_TAG_DIRECT_CAPTURE_POINT)
-                local pos = ent:GetPos() - Vector(0, 0, (maxs.z - mins.z) / 2 - math.sin(CurTime() * 2) * 4 - 8)
+                local pos = ent:WorldSpaceCenter() - Vector(0, 0, (maxs.z - mins.z) / 2 + math.sin(CurTime() * 2) * 4 - 8)
+                if ent:GetModel() == "models/props_interiors/Furniture_Lamp01a.mdl" then
+                    pos = pos - Vector(0, 0, (maxs.z - mins.z) / 2)
+                end
                 local clr = (ent:GetTeam() == TEAM_UNASSIGNED and Color(255, 255, 255) or team.GetColor(ent:GetTeam()))
                 local prog = ent:GetCapProgress() / ent:GetCaptureDuration()
 
