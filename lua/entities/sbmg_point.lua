@@ -88,7 +88,7 @@ if SERVER then
     end
 
     function ENT:StartCapture(t, ply)
-        if self:GetCapTeam() == 0 and (t >= SBTM_RED and t <= SBTM_YEL) and hook.Run("SBMG_CanCapturePoint", self, t, ply) ~= false then
+        if self:GetCapTeam() == 0 and (t >= SBTM_RED and t <= SBTM_YEL) and t ~= self:GetTeam() and hook.Run("SBMG_CanCapturePoint", self, t, ply) ~= false then
             self:SetCapTeam(t)
             self:SetCapProgress(0)
         end
