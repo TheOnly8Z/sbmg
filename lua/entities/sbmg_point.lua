@@ -9,14 +9,25 @@ ENT.SBTM_TeamEntity = true
 ENT.Editable = true
 ENT.ThinkDelay = 0.1
 ENT.PresetNames = {
-    "Alpha",
-    "Bravo",
-    "Charlie",
-    "Delta",
-    "Echo",
-    "Foxtrot",
-    "Golf",
-    "Hotel"
+    "Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel","India","Juliett","Kilo","Lima","Mike","November",
+    "Oscar","Papa","Quebec","Romeo","Sierra","Tango","Uniform","Victor","Whiskey","Xray","Yankee","Zulu","TooManyPoints",
+}
+ENT.JokeNames = {
+    [1] = {"Arctic", "Astolfo", "Ass"},
+    [2] = {"Burger Town", "BoyNextDoor"},
+    [3] = "Cum Zone",
+    [4] = "Deez Nuts",
+    [5] = "Egg",
+    [6] = "Faker",
+    [7] = {"Gamer", "Garry", "Gnomed"},
+    [8] = "Hentai",
+    [9] = nil, -- Really out of ideas here
+    [10] = {"Japan", "Jesus"},
+    [11] = {"Knight", "Knife"},
+    [12] = {"Loser", "Ligma"},
+    [13] = "Megalovania",
+    [14] = {"Nice", "N-word"},
+    [15] = {"Oranche", "Oregano", "Oof"},
 }
 
 function ENT:SetupDataTables()
@@ -35,6 +46,7 @@ if SERVER then
         if not tr.Hit then return end
         local ent = ents.Create( ClassName )
         ent:SetPos( tr.HitPos + tr.HitNormal * 16 )
+        ent:SetAngles(Angle(0, ply:GetAngles().y - 180, 0))
         ent:Spawn()
         ent:Activate()
         return ent
@@ -48,6 +60,7 @@ if SERVER then
             self:SetModel("models/props_sbmg/control.mdl")
             self:SetCollisionGroup(COLLISION_GROUP_NONE)
         end
+        self:DropToFloor()
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetUseType(SIMPLE_USE)
         if not GetConVar("sbmg_obj_physics"):GetBool() then
@@ -56,7 +69,17 @@ if SERVER then
         if self:GetTeam() == 0 then self:SetTeam(TEAM_UNASSIGNED) end
         if self:GetRadius() <= 0 then self:SetRadius(256) end
         if self:GetCaptureDuration() <= 0 then self:SetCaptureDuration(10) end
-        if self:GetPointName() == "" then self:SetPointName(self.PresetNames[#ents.FindByClass("sbmg_point")] or "Point " .. #ents.FindByClass("sbmg_point")) end
+        if self:GetPointName() == "" then
+            local count = #ents.FindByClass("sbmg_point")
+            if count > #self.PresetNames then
+                self:SetPointName("Point " .. count)
+            elseif self.JokeNames[count] and (os.date("%m%d") == "0401" or math.random() <= 0.01) then
+                -- Sleeper April Fools joke, hehehe
+                self:SetPointName(istable(self.JokeNames[count]) and table.Random(self.JokeNames[count]) or self.JokeNames[count])
+            else
+                self:SetPointName(self.PresetNames[count])
+            end
+        end
         self:SetEnabled(true)
     end
 

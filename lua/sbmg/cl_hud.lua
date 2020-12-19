@@ -1,20 +1,23 @@
 surface.CreateFont("SBMG_HUD", {
     font = "Futura-Bold",
     size = 64,
-    shadow = true
+    shadow = false
 })
 
 surface.CreateFont("SBMG_HUD_48", {
     font = "Futura-Bold",
     size = 48,
-    shadow = true
+    shadow = false
 })
 
 surface.CreateFont("SBMG_HUD2", {
     font = "Futura-Bold",
     size = 36,
-    shadow = true
+    shadow = false
 })
+
+local showonhud = GetConVar("sbmg_cl_obj_showonhud")
+local mat_point = Material("sprites/sbmg_pointui.png", "mips smooth")
 
 local function DrawScore(tgt, rank, y)
     local clr
@@ -34,10 +37,81 @@ local function DrawScore(tgt, rank, y)
     end
 end
 
+local function DrawObjectives()
+    local points = {}
+    local disttbl = {}
+
+    cam.Start3D()
+    for _, v in pairs(ents.FindByClass("sbmg_point")) do
+        if not v:GetEnabled() then continue end
+        points[v] = (v:WorldSpaceCenter() + Vector(0, 0, 96)):ToScreen()
+    end
+    cam.End3D()
+
+    -- *Someone* is going to be dumb enough to overlap their points
+    local bcount = 0
+    for ent, info in pairs(points) do
+        disttbl[ent] = ent:GetPos():Distance(EyePos())
+        if disttbl[ent] <= ent:GetRadius() * 1.5 then
+            bcount = bcount + 1
+        end
+    end
+    local bottomx = ScrW() * 0.5 - math.max(bcount - 1, 0) * 64
+
+    for ent, info in pairs(points) do
+        local dist = disttbl[ent]
+        local a = math.Clamp(math.Distance(info.x, info.y, ScrW() * 0.5, ScrH() * 0.5) / 96 + 0.1, 0, 1)
+        local x, y = info.x, info.y
+        local siz = 48
+        local font = "SBMG_HUD2"
+        local clr = ent:GetColor()
+
+        if dist <= ent:GetRadius() * 1.5 then
+            a = math.Clamp((ent:GetRadius() * 1.5 - dist) / ent:GetRadius() + 0.25, 0, 1)
+            x = bottomx
+            y = ScrH() * 0.9
+            siz = 96
+            font = "SBMG_HUD"
+            bottomx = bottomx + 128
+        elseif not info.visible then
+            continue
+        end
+
+        clr.a = 255 * a
+        surface.SetDrawColor(clr.r, clr.g, clr.b, 100 * a)
+        surface.SetMaterial(mat_point)
+        surface.DrawTexturedRect(x - siz / 2, y - siz / 2, siz, siz)
+
+        local point_text = string.upper(string.Left(ent:GetPointName(), 1))
+        surface.SetFont(font)
+        local textw, texth = surface.GetTextSize(point_text)
+        draw.SimpleTextOutlined(point_text, font, x - textw * 0.5 - 1, y - texth * 0.5 - 1, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, 150 * a))
+
+        if ent:GetCapTeam() ~= 0 then
+            draw.SimpleTextOutlined(math.Round(ent:GetCapProgress() / ent:GetCaptureDuration() * 100) .. "%", "SBMG_HUD2", x, y + (font == "SBMG_HUD" and 48 or 24), Color(255, 255, 255, 255 * a), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, 150 * a))
+        end
+
+        --[[]
+        surface.SetTextColor(0, 0, 0, 100 * math.min(dist_m, aim_m))
+        surface.SetTextPos(info.x - textw * 0.5 + 1, info.y - texth * 0.5 + 1)
+        surface.DrawText(point_text)
+
+        surface.SetTextColor(r, g, b, 255 * math.min(dist_m, aim_m))
+        surface.SetTextPos(info.x - textw * 0.5 - 1, info.y - texth * 0.5 - 1)
+        surface.DrawText(point_text)
+        ]]
+    end
+end
+
 hook.Add("HUDPaint", "SBMG", function()
     local tbl = SBMG:GetCurrentGameTable()
+
+    if showonhud:GetInt() == 2 or (showonhud:GetInt() == 1 and tbl) then
+        DrawObjectives()
+    end
+
     if not tbl then
-        if (SBMG.LastWinTime or 0) + 10 >= CurTime() then
+        if (SBMG.LastWinTime or 0) + 5 >= CurTime() then
             local str
             if SBMG.LastWinner == false then
                 str = language.GetPhrase("sbmg.nocontest")
