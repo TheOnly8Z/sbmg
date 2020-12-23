@@ -21,6 +21,7 @@ local mat_point = Material("sprites/sbmg_pointui.png", "mips smooth")
 
 local function DrawScore(tgt, rank, y)
     local clr
+    if not IsValid(tgt) then return end
     if SBMG:GetCurrentGameTable().TeamScores then
         clr = team.GetColor(tgt.OrigTeam or tgt:Team())
     else
