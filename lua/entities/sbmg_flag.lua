@@ -34,14 +34,16 @@ if SERVER then
     end
 
     function ENT:FlagPickup(ply)
-        if ply:IsPlayer() and ply:Alive() and not ply:InVehicle() and
+        if ply:IsPlayer() and ply:Alive() and not ply:InVehicle() and ply ~= self:GetOwner() and
                 ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
             if ply:Team() ~= self:GetTeam() then
                 local swep = ply:Give("sbmg_flagwep")
                 if IsValid(swep) then
                     swep:SetTeam(self:GetTeam())
                     swep:SetStand(self:GetStand())
-                    ply:SelectWeapon(swep)
+                    if SBMG:GetGameOption("flag_hold") then
+                        ply:SetActiveWeapon(ply:GetWeapon("sbmg_flagwep"))
+                    end
                     self:Remove()
                 end
             elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then

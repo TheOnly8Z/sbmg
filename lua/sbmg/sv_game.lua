@@ -33,6 +33,7 @@ function SBMG:MinigameStart(name, options)
     end
 
     SBMG:ValidateOptions(options, name)
+    if GetConVar("developer"):GetBool() then PrintTable(options) end
 
     if SBMG.Minigames[name].CanStart then
         local result = SBMG.Minigames[name]:CanStart(options)
@@ -153,17 +154,17 @@ end
 function SBMG:ValidateOptions(options, name)
     local orig = SBMG.Minigames[name].Options
     for i, v in pairs(orig) do
-        if not options[i] then options[i] = v.default end
+        if options[i] == nil then options[i] = v.default end
         if v.type == "i" then
             -- Integer
             options[i] = math.Clamp(math.Round(tonumber(options[i])), orig.min or -math.huge, orig.max or math.huge)
         elseif v.type == "f" then
             -- Float
             options[i] = math.Clamp(tonumber(options[i]), orig.min or -math.huge, orig.max or math.huge)
-        elseif v.type == "b" then
+        elseif v.type == "b" and not isbool(options[i]) then
             -- Bool
             options[i] = tobool(options[i])
-        elseif v.type == "s" then
+        elseif v.type == "s" and not isstring(options[i])  then
             -- String
             options[i] = tostring(options[i])
         end

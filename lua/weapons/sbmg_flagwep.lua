@@ -19,6 +19,8 @@ end
 
 
 function SWEP:Initialize()
+    self:SetHoldType("melee2")
+
     if SERVER and IsValid(self:GetStand()) then
         self:GetStand().FlagEnt = self
     end
@@ -35,12 +37,11 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
-    self:SetHoldType("melee2")
 end
 
 function SWEP:Holster()
-    if SERVER then
-        self:SpawnFlagAndRemove()
+    if SERVER and SBMG:GetGameOption("flag_hold") then
+        self:SpawnFlagAndRemove(false)
     end
     return true
 end
@@ -49,6 +50,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+    if SERVER then self:SpawnFlagAndRemove(false) end
 end
 
 if SERVER then
@@ -60,16 +62,31 @@ if SERVER then
         else
             flagent:SetPos(ent:GetPos())
         end
-        flagent:SetAngles(ent:GetAngles() + Angle(0, 90, 0))
+        if stand then
+            flagent:SetAngles(ent:GetAngles())
+        else
+            flagent:SetAngles(Angle(0, ent:GetAngles().y + 90, 0))
+        end
+        print(flagent:GetAngles())
         flagent:SetTeam(self:GetTeam())
         flagent:SetStand(self:GetStand())
         if stand then
             flagent:SetParent(ent)
         else
             flagent:SetDropTime(CurTime())
+            -- Custom drop to floor solution
+            local tr = util.TraceHull({
+                start = flagent:GetPos() + Vector(0, 0, 4),
+                endpos = flagent:GetPos() - Vector(0, 0, 100000),
+                mins = Vector(-8, -16, -1),
+                maxs = Vector(12, 24, 126),
+                collisiongroup = COLLISION_GROUP_DEBRIS
+            })
+            flagent:SetPos(tr.HitPos)
         end
+        flagent:SetOwner(self:GetOwner())
         flagent:Spawn()
-        if not stand then flagent:DropToFloor() end
+        timer.Simple(3, function() if IsValid(flagent) then flagent:SetOwner(nil) end end)
         self:Remove()
         return flagent
     end
@@ -82,7 +99,7 @@ if SERVER then
 
     function SWEP:OnRemove()
         if not self.DONE then
-            self:SpawnFlagAndRemove()
+            self:SpawnFlagAndRemove(false)
         end
     end
 elseif CLIENT then
@@ -91,35 +108,50 @@ elseif CLIENT then
     end
 
     function SWEP:DrawWorldModel(flags)
-        if (IsValid(self:GetOwner())) then
-            -- Specify a good position
-            local offsetVec = Vector(2, -1.5, 24)
-            local offsetAng = Angle(180, 90, 0)
-            if self.ClientWM:GetModel() == "models/props_combine/breenbust.mdl" then
-                offsetVec = Vector(2, -1.5, -12)
-                offsetAng = Angle(180, 180, 0)
+    end
+    if SBMG then
+        hook.Add("PostPlayerDraw", "SBMG_FlagWep", function(ply)
+            if not ply:Alive() or not ply:HasWeapon("sbmg_flagwep") then return end
+            local wep = ply:GetWeapon("sbmg_flagwep")
+            local mdl = wep.ClientWM
+            local active = ply:GetActiveWeapon() == wep
+
+            local pos, ang
+            if active then
+                if mdl:GetModel() == "models/props_combine/breenbust.mdl" then
+                    pos = Vector(2, -1.5, -12)
+                    ang = Angle(180, 180, 0)
+                else
+                    pos = Vector(2, -1.5, 24)
+                    ang = Angle(180, 90, 0)
+                end
+            else
+                if mdl:GetModel() == "models/props_combine/breenbust.mdl" then
+                    pos = Vector(2, -1.5, -12)
+                    ang = Angle(180, 180, 0)
+                else
+                    pos = Vector(-24, -2, -4)
+                    ang = Angle(0, 90, 90)
+                end
             end
-            local boneid = self:GetOwner():LookupBone("ValveBiped.Bip01_R_Hand")
+            local boneid = ply:LookupBone(active and "ValveBiped.Bip01_R_Hand" or "ValveBiped.Bip01_Spine2")
             if not boneid then return end
 
-            local matrix = self:GetOwner():GetBoneMatrix(boneid)
+            local matrix = ply:GetBoneMatrix(boneid)
             if not matrix then return end
 
-            local newPos, newAng = LocalToWorld(offsetVec, offsetAng, matrix:GetTranslation(), matrix:GetAngles())
+            local newPos, newAng = LocalToWorld(pos, ang, matrix:GetTranslation(), matrix:GetAngles())
 
-            self.ClientWM:SetPos(newPos)
-            self.ClientWM:SetAngles(newAng)
+            mdl:SetPos(newPos)
+            mdl:SetAngles(newAng)
 
-            self.ClientWM:SetupBones()
-        else
-            self.ClientWM:SetPos(self:GetPos())
-            self.ClientWM:SetAngles(self:GetAngles())
-        end
+            mdl:SetupBones()
 
-        local r, g, b = render.GetColorModulation()
-        local clr = team.GetColor(self:GetTeam())
-        render.SetColorModulation(clr.r / 255, clr.g / 255, clr.b / 255)
-        self.ClientWM:DrawModel()
-        render.SetColorModulation(r, g, b)
+            local r, g, b = render.GetColorModulation()
+            local clr = team.GetColor(wep:GetTeam())
+            render.SetColorModulation(clr.r / 255, clr.g / 255, clr.b / 255)
+            mdl:DrawModel()
+            render.SetColorModulation(r, g, b)
+        end)
     end
 end

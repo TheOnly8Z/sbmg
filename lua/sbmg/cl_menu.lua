@@ -133,7 +133,7 @@ list.Set( "DesktopWindows", "SBMG", {
         start:Dock(TOP)
         start:DockMargin(24, 4, 24, 4)
         start:SetText(SBMG:GetActiveGame() ~= nil and language.GetPhrase("sbmg.restart") or language.GetPhrase("sbmg.start"))
-        start:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil or true)
+        start:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil)
         start.DoClick = function(pnl)
             local _, data = gamebox:GetSelected()
             if data then
@@ -152,7 +152,7 @@ list.Set( "DesktopWindows", "SBMG", {
                 end
 
                 -- Save this to a file of the local player so we can auto-load it next time
-                PrintTable(output)
+                --if GetConVar("developer"):GetBool() then PrintTable(output) end
                 if not file.IsDir("sbmg", "DATA") then file.CreateDir("sbmg") end
                 local json = util.TableToJSON(output, true)
                 file.Write("sbmg/" .. data .. ".txt", json)
@@ -172,7 +172,7 @@ list.Set( "DesktopWindows", "SBMG", {
         stop:Dock(TOP)
         stop:DockMargin(24, 4, 24, 4)
         stop:SetText(language.GetPhrase("sbmg.stop"))
-        stop:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil or true)
+        stop:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil)
         stop.DoClick = function(pnl)
             net.Start("SBMG_Admin")
                 net.WriteUInt(SBMG_NET_MODE_END, SBMG_NET_MODE_BITS)
@@ -185,7 +185,7 @@ list.Set( "DesktopWindows", "SBMG", {
         interrupt:Dock(TOP)
         interrupt:DockMargin(24, 4, 24, 4)
         interrupt:SetText(language.GetPhrase("sbmg.interrupt"))
-        interrupt:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil or true)
+        interrupt:SetDisabled(LocalPlayer():IsAdmin() and SBMG:GetActiveGame() == nil)
         interrupt.DoClick = function(pnl)
             net.Start("SBMG_Admin")
                 net.WriteUInt(SBMG_NET_MODE_INTERRUPT, SBMG_NET_MODE_BITS)
@@ -276,5 +276,11 @@ list.Set( "DesktopWindows", "SBMG", {
             end
         end
         if gamechoice then timer.Simple(0, function() gamebox:ChooseOptionID(gamechoice) end) end
+        if not LocalPlayer():IsAdmin() then
+            start:SetDisabled(true)
+            stop:SetDisabled(true)
+            cancel:SetDisabled(true)
+            gamebox:SetDisabled(true)
+        end
     end
 })
