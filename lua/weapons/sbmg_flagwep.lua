@@ -3,6 +3,7 @@ AddCSLuaFile()
 SWEP.PrintName = "SBMG Flag"
 SWEP.Spawnable = false
 SWEP.Author = "8Z"
+SWEP.Instructions = "Holster to drop"
 
 SWEP.ViewModel = "models/props_sbmg/flag.mdl"
 SWEP.WorldModel = "models/props_sbmg/flag.mdl"
@@ -99,10 +100,10 @@ elseif CLIENT then
                 offsetAng = Angle(180, 180, 0)
             end
             local boneid = self:GetOwner():LookupBone("ValveBiped.Bip01_R_Hand")
-            if !boneid then return end
+            if not boneid then return end
 
             local matrix = self:GetOwner():GetBoneMatrix(boneid)
-            if !matrix then return end
+            if not matrix then return end
 
             local newPos, newAng = LocalToWorld(offsetVec, offsetAng, matrix:GetTranslation(), matrix:GetAngles())
 
@@ -122,14 +123,3 @@ elseif CLIENT then
         render.SetColorModulation(r, g, b)
     end
 end
-
---[[]
-local function plydropflag(ply)
-    if IsValid(ply) and ply:HasWeapon("sbmg_flagwep") then
-        ply:GetWeapon("sbmg_flagwep"):SpawnFlagAndRemove()
-    end
-end
-]]
---hook.Add("PlayerDeath", "sbmg_flagwep", plydropflag)
---hook.Add("PlayerSilentDeath", "sbmg_flagwep", plydropflag)
---hook.Add("PlayerDisconnected", "sbmg_flagwep", plydropflag)
