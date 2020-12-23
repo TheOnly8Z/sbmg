@@ -40,11 +40,9 @@ function MINIGAME:GetParticipants()
 end
 
 function MINIGAME:GameStart()
-    if SBMG:GetGameOption("clear_cap") then
-        for _, ent in pairs(ents.FindByClass("sbmg_point")) do
-            ent:SetTeam(TEAM_UNASSIGNED)
-            ent:SetCapTeam(0)
-            ent:SetCapProgress(0)
+    if SERVER then
+        for _, ent in pairs(ents.FindByClass("sbmg_flagpole")) do
+            ent:ForceReturnFlag()
         end
     end
 end
@@ -81,3 +79,10 @@ function MINIGAME:GameEnd(winner)
 end
 
 MINIGAME.Hooks = {}
+MINIGAME.Hooks.SBMG_FlagCaptured = function(ply, stand, flag)
+    SBMG:AddScore(ply, 1)
+    SBMG:AddScore(ply:Team(), 1)
+    if SBMG.TeamScore[ply:Team()] >= SBMG:GetGameOption("score_to_win") then
+        SBMG:MinigameEnd(ply:Team())
+    end
+end

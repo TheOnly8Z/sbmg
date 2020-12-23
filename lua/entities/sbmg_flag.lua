@@ -26,47 +26,65 @@ if SERVER then
             self:SetMoveType(MOVETYPE_NONE)
         end
         if IsValid(self:GetParent()) then self:SetTeam(self:GetParent():GetTeam()) end
+        if IsValid(self:GetStand()) then
+            self:GetStand().FlagEnt = self
+        end
         self:SetTrigger(true)
         self:UseTriggerBounds(true, 12)
     end
 
-    function ENT:StartTouch(ply)
-        if ply:IsPlayer() and ply:Alive() and ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED
-                and ply:Team() ~= self:GetTeam() then
-            -- TODO give the flag to the player
-            local swep = ply:Give("sbmg_flagwep")
-            if IsValid(swep) then
-                swep:SetTeam(self:GetTeam())
-                swep:SetStand(self:GetStand())
-                ply:SelectWeapon(swep)
-                self:Remove()
+    function ENT:FlagPickup(ply)
+        if ply:IsPlayer() and ply:Alive() and not ply:InVehicle() and
+                ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
+            if ply:Team() ~= self:GetTeam() then
+                local swep = ply:Give("sbmg_flagwep")
+                if IsValid(swep) then
+                    swep:SetTeam(self:GetTeam())
+                    swep:SetStand(self:GetStand())
+                    ply:SelectWeapon(swep)
+                    self:Remove()
+                end
+            elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then
+                self:ReturnFlag()
             end
         end
+    end
+
+    function ENT:StartTouch(ply)
+        self:FlagPickup(ply)
+    end
+
+    function ENT:Use(ply)
+        self:FlagPickup(ply)
     end
 
     function ENT:Think()
         if not IsValid(self:GetParent()) and self:GetDropTime() > 0 then
             local endtime = SBMG:GetGameOption("flag_return_time") or 60
             if endtime > 0 and self:GetDropTime() + endtime < CurTime() then
-                -- Return to its rightful owner
-                local stand = self:GetStand()
-                if IsValid(stand) and self:GetTeam() == stand:GetTeam() then
-                    if GetConVar("sbmg_obj_simple"):GetBool() then
-                        self:SetPos(stand:GetPos() + stand:GetRight() * -2.32 + stand:GetUp() * 30)
-                    else
-                        self:SetPos(stand:GetPos())
-                    end
-                    self:SetAngles(stand:GetAngles())
-                    self:SetParent(self:GetStand())
-                else
-                    self:Remove()
-                end
+                self:ReturnFlag()
             end
         end
     end
 
-    function ENT:Use(ply)
-
+    function ENT:ReturnFlag()
+        if IsValid(self:GetParent()) then return end
+        local eff = EffectData()
+        eff:SetEntity(self)
+        util.Effect("entity_remove", eff)
+        -- Return to its rightful owner
+        local stand = self:GetStand()
+        if IsValid(stand) and self:GetTeam() == stand:GetTeam() then
+            if GetConVar("sbmg_obj_simple"):GetBool() then
+                self:SetPos(stand:GetPos() + stand:GetRight() * -2.32 + stand:GetUp() * 30)
+            else
+                self:SetPos(stand:GetPos())
+            end
+            self:SetAngles(stand:GetAngles())
+            self:SetParent(self:GetStand())
+        else
+            self:Remove()
+        end
     end
 elseif CLIENT then
     function ENT:Draw()
