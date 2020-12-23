@@ -67,7 +67,6 @@ if SERVER then
         else
             flagent:SetAngles(Angle(0, ent:GetAngles().y + 90, 0))
         end
-        print(flagent:GetAngles())
         flagent:SetTeam(self:GetTeam())
         flagent:SetStand(self:GetStand())
         if stand then
@@ -152,6 +151,16 @@ elseif CLIENT then
             render.SetColorModulation(clr.r / 255, clr.g / 255, clr.b / 255)
             mdl:DrawModel()
             render.SetColorModulation(r, g, b)
+        end)
+
+        hook.Add("HUDPaint", "SBMG_FlagWep", function()
+            if LocalPlayer():HasWeapon("sbmg_flagwep") then
+                local wep = LocalPlayer():GetWeapon("sbmg_flagwep")
+                draw.SimpleTextOutlined(string.format(language.GetPhrase("sbmg.flag_ui"), team.GetName(wep:GetTeam())), "SBMG_HUD2", ScrW() * 0.5, ScrH() * 0.8, team.GetColor(wep:GetTeam()), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, 50))
+                if LocalPlayer():GetActiveWeapon() == wep then
+                    draw.SimpleTextOutlined(language.GetPhrase("sbmg.flag_ui.help"), "SBMG_HUD2", ScrW() * 0.5, ScrH() * 0.8 + 36, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, 50))
+                end
+            end
         end)
     end
 end

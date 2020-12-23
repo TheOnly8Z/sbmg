@@ -53,19 +53,7 @@ end
 ]]
 
 function MINIGAME:Timeout()
-    local winner = nil
-    local tie = false
-    for t, s in pairs(SBMG.TeamScore) do
-        if not winner then
-            winner = t
-        elseif s > SBMG.TeamScore[winner] then
-            winner = t
-            tie = false
-        elseif s == SBMG.TeamScore[winner] then
-            tie = true
-        end
-    end
-    return tie and false or winner
+    return SBMG:Timeout_TeamScore()
 end
 
 function MINIGAME:GameEnd(winner)

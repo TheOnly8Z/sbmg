@@ -205,7 +205,7 @@ list.Set( "DesktopWindows", "SBMG", {
         local plys, teams
 
         local check_min = vgui.Create("DPanel", toplayout)
-        check_min:SetSize(top:GetWide() * 0.5, top:GetTall() / 3 * 2)
+        check_min:SetSize(top:GetWide() * 0.5, top:GetTall())
         check_min.Paint = function(pnl, w, h)
             local _, data = gamebox:GetSelected()
             if data and start:GetDisabled() then
@@ -213,17 +213,17 @@ list.Set( "DesktopWindows", "SBMG", {
             end
             if data and plys then
                 local text = string.format(language.GetPhrase("sbmg.min.players"), table.Count(plys), SBMG.Minigames[data].MinPlayers or 0)
-                draw.SimpleText(text, "Futura_24", 24, 0, Color(0, 0, 0), TEXT_ALIGN_LEFT)
+                draw.SimpleText(text, "Futura_24", 24, 4, Color(0, 0, 0), TEXT_ALIGN_LEFT)
                 surface.SetDrawColor( 255, 255, 255, 255 )
                 surface.SetMaterial((SBMG.Minigames[data].MinPlayers or 0) > table.Count(plys) and cross or tick)
-                surface.DrawTexturedRect( 4, 4, 16, 16 )
+                surface.DrawTexturedRect( 4, 8, 16, 16 )
             end
             if data and teams then
                 local text = string.format(language.GetPhrase("sbmg.min.teams"), table.Count(teams), SBMG.Minigames[data].MinTeams or 0)
-                draw.SimpleText(text, "Futura_24", 24, check_min:GetTall() / 3 + 4, Color(0, 0, 0), TEXT_ALIGN_LEFT)
+                draw.SimpleText(text, "Futura_24", 24, check_min:GetTall() / 3 + 8, Color(0, 0, 0), TEXT_ALIGN_LEFT)
                 surface.SetDrawColor(255, 255, 255, 255)
                 surface.SetMaterial((SBMG.Minigames[data].MinTeams or 0) > table.Count(teams) and cross or tick)
-                surface.DrawTexturedRect( 4, check_min:GetTall() / 3 + 8, 16, 16 )
+                surface.DrawTexturedRect( 4, check_min:GetTall() / 3 + 12, 16, 16 )
 
                 local x = 4
                 for i = SBTM_RED, SBTM_YEL do
@@ -235,14 +235,18 @@ list.Set( "DesktopWindows", "SBMG", {
                         clr.a = 150
                     end
                     surface.SetMaterial(SBMG.FlagMaterials[i])
-                    surface.DrawTexturedRect( x, check_min:GetTall() / 3 * 2 + 8, 16, 16 )
+                    surface.DrawTexturedRect( x, check_min:GetTall() / 3 * 2 + 12, 16, 16 )
                     local c = 0
                     for _, v in pairs(plys) do if v:Team() == i then c = c + 1 end end
-                    draw.SimpleTextOutlined(c, "Futura_18", x + 16, check_min:GetTall() / 3 * 2 + 8, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 150))
+                    draw.SimpleTextOutlined(c, "Futura_18", x + 16, check_min:GetTall() / 3 * 2 + 12, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 150))
                     x = x + 36
                 end
             end
         end
+
+        local check_ents = vgui.Create("DIconLayout", toplayout)
+        check_ents:SetSize(top:GetWide() * 0.5, top:GetTall())
+        check_ents.Paint = function(pnl, w, h) end
 
         local optionpanel = vgui.Create("DPanel", window)
         optionpanel:Dock(FILL)
