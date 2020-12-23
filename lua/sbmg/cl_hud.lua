@@ -21,18 +21,19 @@ local mat_point = Material("sprites/sbmg_pointui.png", "mips smooth")
 
 local function DrawScore(tgt, rank, y)
     local clr
-    if not IsValid(tgt) then return end
-    if SBMG:GetCurrentGameTable().TeamScores then
+    if not IsValid(tgt) then
+        clr = Color(100, 100, 100)
+    elseif SBMG:GetCurrentGameTable().TeamScores then
         clr = team.GetColor(tgt.OrigTeam or tgt:Team())
     else
         local pclr = tgt:GetPlayerColor()
         clr = Color(pclr.x * 255, pclr.y * 255, pclr.z * 255)
     end
-    local str = "[" .. rank .. "] " .. tgt:GetName() .. ": " .. SBMG.ActivePlayers[tgt]
+    local str = "[" .. rank .. "] " .. (IsValid(tgt) and tgt:GetName() or language.GetPhrase("sbmg.disconnected")) .. ": " .. SBMG.ActivePlayers[tgt]
     surface.SetFont("SBMG_HUD2")
     local w, s = surface.GetTextSize(str)
     draw.SimpleTextOutlined(str, "SBMG_HUD2", ScreenScale(4), y, clr,  TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 50))
-    if tgt:Team() == TEAM_UNASSIGNED then
+    if IsValid(tgt) and tgt:Team() == TEAM_UNASSIGNED then
         surface.SetDrawColor(clr.r, clr.g, clr.b)
         surface.DrawRect(ScreenScale(4), y + s * 0.5, w, ScreenScale(2))
     end
