@@ -47,6 +47,7 @@ if SERVER then
         end
         self.FlagEnt:SetAngles(self:GetAngles())
         self.FlagEnt:SetParent(self)
+        self.FlagEnt:SetStand(self)
         self.FlagEnt:Spawn()
     end
 

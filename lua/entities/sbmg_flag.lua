@@ -9,6 +9,8 @@ ENT.AdminOnly = true
 
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "Team")
+    self:NetworkVar("Entity", 0, "Stand")
+    self:NetworkVar("Float", 0, "DropTime")
 end
 
 if SERVER then
@@ -24,6 +26,47 @@ if SERVER then
             self:SetMoveType(MOVETYPE_NONE)
         end
         if IsValid(self:GetParent()) then self:SetTeam(self:GetParent():GetTeam()) end
+        self:SetTrigger(true)
+        self:UseTriggerBounds(true, 12)
+    end
+
+    function ENT:StartTouch(ply)
+        if ply:IsPlayer() and ply:Alive() and ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED
+                and ply:Team() ~= self:GetTeam() then
+            -- TODO give the flag to the player
+            local swep = ply:Give("sbmg_flagwep")
+            if IsValid(swep) then
+                swep:SetTeam(self:GetTeam())
+                swep:SetStand(self:GetStand())
+                ply:SelectWeapon(swep)
+                self:Remove()
+            end
+        end
+    end
+
+    function ENT:Think()
+        if not IsValid(self:GetParent()) and self:GetDropTime() > 0 then
+            local endtime = SBMG:GetGameOption("flag_return_time") or 60
+            if endtime > 0 and self:GetDropTime() + endtime < CurTime() then
+                -- Return to its rightful owner
+                local stand = self:GetStand()
+                if IsValid(stand) and self:GetTeam() == stand:GetTeam() then
+                    if GetConVar("sbmg_obj_simple"):GetBool() then
+                        self:SetPos(stand:GetPos() + stand:GetRight() * -2.32 + stand:GetUp() * 30)
+                    else
+                        self:SetPos(stand:GetPos())
+                    end
+                    self:SetAngles(stand:GetAngles())
+                    self:SetParent(self:GetStand())
+                else
+                    self:Remove()
+                end
+            end
+        end
+    end
+
+    function ENT:Use(ply)
+
     end
 elseif CLIENT then
     function ENT:Draw()
