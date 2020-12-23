@@ -34,7 +34,7 @@ end
 
 function MINIGAME:CanStart(options)
     if table.Count(ents.FindByClass("sbmg_point")) < options["score_to_win"] then
-        return false, "#sbmg.score_over_points"
+        return false, "sbmg.score_over_points"
     end
 end
 

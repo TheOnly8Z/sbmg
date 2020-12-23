@@ -148,7 +148,7 @@ list.Set( "DesktopWindows", "SBMG", {
 
                 if SBMG.Minigames[data].CanStart then
                     local can, message = SBMG.Minigames[data]:CanStart(output)
-                    if not can then Derma_Message(language.GetPhrase(message), language.GetPhrase("sbmg.title"), "OK") return end
+                    if not can then Derma_Message(language.GetPhrase(message or "sbmg.unknown_error"), language.GetPhrase("sbmg.title"), "OK") return end
                 end
 
                 -- Save this to a file of the local player so we can auto-load it next time
