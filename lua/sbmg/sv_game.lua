@@ -34,7 +34,10 @@ function SBMG:MinigameStart(name, options)
 
     SBMG:ValidateOptions(options, name)
 
-    if SBMG.Minigames[name].CanStart and not SBMG.Minigames[name]:CanStart(options) then return end
+    if SBMG.Minigames[name].CanStart then
+        local result = SBMG.Minigames[name]:CanStart(options)
+        if result == false then return end
+    end
 
     SBMG.ActiveGame.Name = name
     SBMG.ActiveGame.Options = options
