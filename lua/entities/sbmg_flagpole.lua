@@ -1,6 +1,7 @@
 AddCSLuaFile()
 
 ENT.PrintName = "SBMG Flag Stand"
+ENT.ShortName = "Flags"
 ENT.Type = "anim"
 ENT.Category = "Fun + Games"
 ENT.Spawnable = not game.SinglePlayer()

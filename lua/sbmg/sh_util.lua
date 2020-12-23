@@ -17,6 +17,37 @@ function SBMG:GameHasTag(tag)
     return bit.band(tbl.Tags or 0, tag) == tag
 end
 
+function SBMG:GetEntCount(class, c, teams)
+    local perTeam = (c < 0)
+    c = math.abs(c)
+    local enttbl = ents.FindByClass(class)
+    if perTeam then
+        local team_count = {}
+        for _, t in pairs(teams) do
+            team_count[t] = 0
+        end
+        for _, e in pairs(enttbl) do
+            if team_count[e:GetTeam()] then
+                team_count[e:GetTeam()] = team_count[e:GetTeam()] + 1
+            end
+        end
+        local not_enough = nil
+        for t, tc in pairs(team_count) do
+            if tc < c then
+                not_enough = t
+                break
+            end
+        end
+        if not_enough then
+            return false, team_count, not_enough
+        else
+            return true, team_count
+        end
+    else
+        return table.Count(enttbl) >= c, table.Count(enttbl)
+    end
+end
+
 -- Minigame default functions
 function SBMG:Timeout_TeamScore()
     local winner = nil

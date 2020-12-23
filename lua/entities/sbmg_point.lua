@@ -1,6 +1,7 @@
 AddCSLuaFile()
 
 ENT.PrintName = "SBMG Point"
+ENT.ShortName = "Points"
 ENT.Type = "anim"
 ENT.Category = "Fun + Games"
 ENT.Spawnable = not game.SinglePlayer()

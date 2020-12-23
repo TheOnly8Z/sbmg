@@ -208,7 +208,7 @@ list.Set( "DesktopWindows", "SBMG", {
         check_min:SetSize(top:GetWide() * 0.5, top:GetTall())
         check_min.Paint = function(pnl, w, h)
             local _, data = gamebox:GetSelected()
-            if data and start:GetDisabled() then
+            if data and (table.Count(plys) < (SBMG.Minigames[data].MinPlayers or 0) or (SBMG.Minigames[data].MinTeams or 0) > table.Count(teams)) then
                 draw.RoundedBox(2, 0, 0, w, h, Color(255, 0, 0, math.abs(math.sin(SysTime() * 2) ) * 40 + 20))
             end
             if data and plys then
@@ -274,6 +274,56 @@ list.Set( "DesktopWindows", "SBMG", {
 
                 if tbl.MinTeams and table.Count(teams) < tbl.MinTeams then
                     okay = false
+                end
+
+                for _, v in pairs(check_ents:GetChildren()) do
+                    v:Remove()
+                end
+                for class, count in pairs(SBMG.Minigames[data].MinEnts or {}) do
+                    local p = vgui.Create("DPanel", check_ents)
+                    local can, t = SBMG:GetEntCount(class, count, teams)
+                    if not can then okay = false end
+                    p:SetSize(top:GetWide() * 0.5, top:GetTall() / 3)
+                    p.Paint = function(pnl2, w, h)
+                        if not can then
+                            draw.RoundedBox(2, 0, 0, w, h, Color(255, 0, 0, math.abs(math.sin(SysTime() * 2) ) * 40 + 20))
+                        end
+                        local ent = scripted_ents.Get(class)
+                        local text
+                        if count > 0 then
+                            text = string.format(language.GetPhrase("sbmg.min.ent"), ent.ShortName or ent.PrintName, t, math.abs(count))
+                        else
+                            local sum = 0
+                            for _, s in pairs(t) do sum = sum + s end
+                            text = string.format(language.GetPhrase("sbmg.min.ent"), ent.ShortName or ent.PrintName, sum, math.abs(count))
+                        end
+                        surface.SetDrawColor( 255, 255, 255, 255 )
+                        surface.SetMaterial(can and tick or cross)
+                        surface.DrawTexturedRect( 4, 8, 16, 16 )
+                        surface.SetFont("Futura_24")
+                        local textw, texth = surface.GetTextSize(text)
+                        draw.SimpleText(text, "Futura_24", 24, 4, Color(0, 0, 0))
+                        if count < 0 then
+                            draw.SimpleText(language.GetPhrase("sbmg.min.perteam"), "Futura_13", 24 + textw, 12, Color(0, 0, 0))
+                            local x = 4
+                            for i = SBTM_RED, SBTM_YEL do
+                                if not t[i] then continue end
+                                local clr = team.GetColor(i)
+                                if table.HasValue(teams, i) then
+                                    surface.SetDrawColor(255, 255, 255, 255)
+                                else
+                                    surface.SetDrawColor(255, 255, 255, 150)
+                                    clr.a = 150
+                                end
+                                surface.SetMaterial(SBMG.FlagMaterials[i])
+                                surface.DrawTexturedRect( x, 32, 16, 16 )
+                                local c = 0
+                                for _, v in pairs(plys) do if v:Team() == i then c = c + 1 end end
+                                draw.SimpleTextOutlined(t[i], "Futura_18", x + 16, 32, clr, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 150))
+                                x = x + 36
+                            end
+                        end
+                    end
                 end
 
                 start:SetDisabled(not okay and not SBMG:GetActiveGame())

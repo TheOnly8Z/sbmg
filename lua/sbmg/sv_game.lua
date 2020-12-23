@@ -6,26 +6,11 @@ function SBMG:MinigameStart(name, options)
     if SBMG.Minigames[name].MinTeams and table.Count(teams) < SBMG.Minigames[name].MinTeams then print("[SBMG] Can't start minigame, not enough teams") return end
     if SBMG.Minigames[name].MinEnts then
         for v, c in pairs(SBMG.Minigames[name].MinEnts) do
-            local perTeam = (c < 0)
-            c = math.abs(c)
-            local enttbl = ents.FindByClass(v)
-            if perTeam then
-                local missed_teams = {}
-                for _, t in pairs(teams) do
-                    missed_teams[t] = c
-                end
-                for _, e in pairs(enttbl) do
-                    if missed_teams[e:GetTeam()] then
-                        missed_teams[e:GetTeam()] = missed_teams[e:GetTeam()] - 1
-                    end
-                end
-                for t, tc in pairs(missed_teams) do
-                    if tc > 0 then
-                    print("[SBMG] Can't start minigame, not enough of entity " .. v .. " for " .. team.GetName(t))
-                        return
-                    end
-                end
-            elseif table.Count(enttbl) < c then
+            local can, t, ne = SBMG:GetEntCount(class, c, teams)
+            if not can and t and ne then
+                print("[SBMG] Can't start minigame, not enough of entity " .. v .. " for " .. team.GetName(ne))
+                return
+            elseif not can then
                 print("[SBMG] Can't start minigame, not enough of entity " .. v)
                 return
             end
