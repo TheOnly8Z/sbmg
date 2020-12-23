@@ -156,6 +156,11 @@ if SERVER then
         end
     end
 
+    function ENT:OnSetTeam(id, ply)
+        self:SetCapTeam(0)
+        self:SetCapProgress(0)
+    end
+
 elseif CLIENT then
     local mat = Material("sprites/sbmg_aura.png")
 
