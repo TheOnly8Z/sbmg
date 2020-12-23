@@ -127,8 +127,8 @@ elseif CLIENT then
                 end
             else
                 if mdl:GetModel() == "models/props_combine/breenbust.mdl" then
-                    pos = Vector(2, -1.5, -12)
-                    ang = Angle(180, 180, 0)
+                    pos = Vector(6, -8, -4)
+                    ang = Angle(0, -90, -90)
                 else
                     pos = Vector(-24, -2, -4)
                     ang = Angle(0, 90, 90)
