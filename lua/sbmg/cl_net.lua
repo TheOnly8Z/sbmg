@@ -29,7 +29,7 @@ net.Receive("SBMG_Game", function()
             end
         elseif mode == SBMG_NET_MODE_INTERRUPT then
             winner = false
-        elseif mode == SBMG_NET_MODE_TIMEOUT then
+        elseif mode == SBMG_NET_MODE_TIE then
             winner = nil
         end
 

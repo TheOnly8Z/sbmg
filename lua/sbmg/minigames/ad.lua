@@ -46,6 +46,8 @@ function MINIGAME:GameStart()
             ent:SetCapTeam(0)
             ent:SetCapProgress(0)
         end
+        SBMG:SendTeamAnnouncer(SBTM_RED, "StartAttack")
+        SBMG:SendTeamAnnouncer(SBTM_BLU, "StartDefend")
     end
     SBMG.TeamScore[SBTM_BLU] = #points
 end

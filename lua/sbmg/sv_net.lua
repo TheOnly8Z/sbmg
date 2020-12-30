@@ -1,6 +1,7 @@
 util.AddNetworkString("SBMG_Admin")
 util.AddNetworkString("SBMG_Game")
 util.AddNetworkString("SBMG_Score")
+util.AddNetworkString("SBMG_Announce")
 
 net.Receive("SBMG_Admin", function(len, ply)
     if not ply:IsAdmin() then return end

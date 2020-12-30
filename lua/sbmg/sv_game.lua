@@ -6,7 +6,7 @@ function SBMG:MinigameStart(name, options)
     if SBMG.Minigames[name].MinTeams and table.Count(teams) < SBMG.Minigames[name].MinTeams then print("[SBMG] Can't start minigame, not enough teams") return end
     if SBMG.Minigames[name].MinEnts then
         for v, c in pairs(SBMG.Minigames[name].MinEnts) do
-            local can, t, ne = SBMG:GetEntCount(class, c, teams)
+            local can, t, ne = SBMG:GetEntCount(v, c, teams)
             if not can and t and ne then
                 print("[SBMG] Can't start minigame, not enough of entity " .. v .. " for " .. team.GetName(ne))
                 return
@@ -36,6 +36,8 @@ function SBMG:MinigameStart(name, options)
     for k, v in pairs(SBMG.Minigames[name].Hooks or {}) do
         hook.Add(k, "SBMG_Minigame", v)
     end
+
+    SBMG:BroadcastAnnouncer("Start")
 
     SBMG.Minigames[name]:GameStart()
 
@@ -74,9 +76,24 @@ end
 
 function SBMG:MinigameEnd(winner)
     local name = SBMG.ActiveGame.Name
+    local isTeam = not isentity(winner)
 
     for k, v in pairs(SBMG.Minigames[name].Hooks or {}) do
         hook.Remove(k, "SBMG_Minigame")
+    end
+
+    if winner == nil then
+        SBMG:BroadcastAnnouncer("Tie")
+    elseif winner ~= false then
+        if isTeam then
+            for t, _ in pairs(SBMG.TeamScore) do
+                SBMG:SendTeamAnnouncer(t, t == winner and "Win" or "Lose")
+            end
+        else
+            for ply, _ in pairs(SBMG.ActivePlayers) do
+                SBMG:SendAnnouncer(ply, ply == winner and "Win" or "Lose")
+            end
+        end
     end
 
     SBMG.Minigames[name]:GameEnd(winner)
@@ -91,10 +108,9 @@ function SBMG:MinigameEnd(winner)
         if winner == false then
             net.WriteUInt(SBMG_NET_MODE_INTERRUPT, SBMG_NET_MODE_BITS)
         elseif winner == nil then
-            net.WriteUInt(SBMG_NET_MODE_TIMEOUT, SBMG_NET_MODE_BITS)
+            net.WriteUInt(SBMG_NET_MODE_TIE, SBMG_NET_MODE_BITS)
         else
             net.WriteUInt(SBMG_NET_MODE_END, SBMG_NET_MODE_BITS)
-            local isTeam = not isentity(winner)
             net.WriteBool(isTeam)
             if isTeam then
                 net.WriteUInt(winner, 12)

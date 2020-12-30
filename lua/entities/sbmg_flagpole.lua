@@ -72,8 +72,8 @@ if SERVER then
                 return
             end
             -- Captured
-            local flagent = ply:GetWeapon("sbmg_flagwep"):SpawnFlagAndRemove(true)
-            hook.Run("SBMG_FlagCaptured", ply, self, flagent)
+            hook.Run("SBMG_FlagCaptured", ply, self, ply:GetWeapon("sbmg_flagwep"):GetTeam())
+            ply:GetWeapon("sbmg_flagwep"):SpawnFlagAndRemove(true)
         end
     end
 

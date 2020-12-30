@@ -15,11 +15,11 @@ ENT.PresetNames = {
 }
 ENT.JokeNames = {
     [1] = {"Arctic", "Astolfo", "Ass"},
-    [2] = {"Burger Town", "BoyNextDoor"},
+    [2] = {"Burger Town", "BoyNextDoor", "Britain"},
     [3] = "Cum Zone",
     [4] = "Deez Nuts",
     [5] = "Egg",
-    [6] = "Faker",
+    [6] = {"Faker", "France"},
     [7] = {"Gamer", "Garry", "Gnomed"},
     [8] = "Hentai",
     [9] = nil, -- Really out of ideas here
@@ -92,6 +92,7 @@ if SERVER then
         if self:GetCapTeam() == 0 and (t >= SBTM_RED and t <= SBTM_YEL) and t ~= self:GetTeam() and hook.Run("SBMG_CanCapturePoint", self, t, ply) ~= false then
             self:SetCapTeam(t)
             self:SetCapProgress(0)
+            SBMG:SeparateTeamAnnouncer(t, "TheirPointCapture", "OurPointCapture")
         end
     end
 
@@ -102,6 +103,11 @@ if SERVER then
             if self:GetTeam() == self:GetCapTeam() then self:SetCapTeam(0) end
             self:SetCapProgress(0)
             hook.Run("SBMG_PointCaptured", self, oldTeam)
+            if self:GetTeam() ~= TEAM_UNASSIGNED then
+                SBMG:SeparateTeamAnnouncer(self:GetTeam(), "TheirPointTaken", "OurPointTaken")
+            end
+            --SBMG:SendTeamAnnouncer(oldTeam, "OurPointTaken")
+            --SBMG:SendTeamAnnouncer(self:GetTeam(), "TheirPointTaken")
         elseif self:GetCapTeam() ~= 0 and self:GetCapProgress() <= 0 then
             self:SetCapTeam(0)
             self:SetCapProgress(0)

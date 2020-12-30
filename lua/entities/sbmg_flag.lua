@@ -44,6 +44,8 @@ if SERVER then
                     if SBMG:GetGameOption("flag_hold") then
                         ply:SetActiveWeapon(ply:GetWeapon("sbmg_flagwep"))
                     end
+                    SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagTaken")
+                    SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagTaken")
                     self:Remove()
                 end
             elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then
@@ -84,6 +86,7 @@ if SERVER then
             end
             self:SetAngles(stand:GetAngles())
             self:SetParent(self:GetStand())
+            SBMG:SeparateTeamAnnouncer(self:GetTeam(), "OurFlagReturned", "TheirFlagReturned")
         else
             self:Remove()
         end

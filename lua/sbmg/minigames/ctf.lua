@@ -17,7 +17,7 @@ MINIGAME.MinEnts = {
 
 MINIGAME.Options = {
     ["time"] = {type = "i", min = 60, default = 600},
-    ["score_to_win"] = {type = "i", min = 1, default = 300},
+    ["score_to_win"] = {type = "i", min = 1, default = 3},
     ["tp_on_start"] = {type = "b", default = true},
     ["flag_return_touch"] = {type = "b", default = true},
     ["flag_return_time"] = {type = "i", min = 1, default = 60},
@@ -67,10 +67,13 @@ function MINIGAME:GameEnd(winner)
 end
 
 MINIGAME.Hooks = {}
-MINIGAME.Hooks.SBMG_FlagCaptured = function(ply, stand, flag)
+MINIGAME.Hooks.SBMG_FlagCaptured = function(ply, stand, flag_team)
     SBMG:AddScore(ply, 1)
     SBMG:AddScore(ply:Team(), 1)
     if SBMG.TeamScore[ply:Team()] >= SBMG:GetGameOption("score_to_win") then
         SBMG:MinigameEnd(ply:Team())
+    else
+        SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagCaptured")
+        SBMG:SendTeamAnnouncer(flag_team, "OurFlagCaptured")
     end
 end

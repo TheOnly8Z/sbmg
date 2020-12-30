@@ -7,7 +7,7 @@ SBMG = SBMG or {}
 SBMG_NET_MODE_START = 0
 SBMG_NET_MODE_END = 1
 SBMG_NET_MODE_INTERRUPT = 2
-SBMG_NET_MODE_TIMEOUT = 3
+SBMG_NET_MODE_TIE = 3
 SBMG_NET_MODE_BITS = 2
 
 -- Override SBTM's no friendly fire option
@@ -36,7 +36,11 @@ SBMG.ActivePlayers = SBMG.ActivePlayers or {
 
 SBMG.TeamScore = {}
 
+SBMG.Announcers = SBMG.Announcers or {}
+SBMG.ActiveAnnouncer = nil
+
 function SBMG:Load()
+    -- Lua Files
     for _, v in pairs(file.Find("sbmg/*", "LUA")) do
         if string.Left(v, 3) == "cl_" then
             AddCSLuaFile("sbmg/" .. v)
@@ -51,6 +55,7 @@ function SBMG:Load()
         end
     end
 
+    -- Minigame definitions
     for _, v in pairs(file.Find("sbmg/minigames/*", "LUA")) do
         MINIGAME = {}
         AddCSLuaFile("sbmg/minigames/" .. v)
@@ -60,11 +65,25 @@ function SBMG:Load()
         SBMG.Minigames[name].SortOrder = SBMG.Minigames[name].SortOrder or 0
         print("[SBMG] Loaded minigame '" .. name .. "'.")
     end
+
+    -- Announcer definitions
+    for _, v in pairs(file.Find("sbmg/announcers/*", "LUA")) do
+        ANNOUNCER = {}
+        AddCSLuaFile("sbmg/announcers/" .. v)
+        include("sbmg/announcers/" .. v)
+        local name = string.Explode(".", v)[1]
+        SBMG.Announcers[name] = ANNOUNCER
+        SBMG.Announcers[name].SortOrder = SBMG.Announcers[name].SortOrder or 0
+        print("[SBMG] Loaded announcer '" .. name .. "'.")
+    end
 end
 SBMG:Load()
 
 concommand.Add("sbmg_reload", function(ply)
     if not IsValid(ply) or ply:IsAdmin() then
         SBMG:Load()
+        if IsValid(ply) and ply:IsListenServerHost() then
+            ply:SendLua("SBMG:Load()")
+        end
     end
 end)

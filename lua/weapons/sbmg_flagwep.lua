@@ -85,6 +85,10 @@ if SERVER then
         end
         flagent:SetOwner(self:GetOwner())
         flagent:Spawn()
+        if not stand then
+            SBMG:SendTeamAnnouncer(self:GetOwner():Team(), "TheirFlagDropped")
+            SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagDropped")
+        end
         timer.Simple(3, function() if IsValid(flagent) then flagent:SetOwner(nil) end end)
         self:Remove()
         return flagent

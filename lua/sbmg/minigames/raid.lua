@@ -40,6 +40,8 @@ function MINIGAME:GameStart()
             ent:SetCapTeam(0)
             ent:SetCapProgress(0)
         end
+        SBMG:SendTeamAnnouncer(SBTM_RED, "StartAttack")
+        SBMG:SendTeamAnnouncer(SBTM_BLU, "StartDefend")
     end
     for p, s in pairs(SBMG.ActivePlayers) do
         p.OrigTeam = p:Team()

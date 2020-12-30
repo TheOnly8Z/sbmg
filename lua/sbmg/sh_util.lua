@@ -48,6 +48,47 @@ function SBMG:GetEntCount(class, c, teams)
     end
 end
 
+local function get_sound(def)
+    if istable(def) then
+        return def[math.random(1, #def)]
+    elseif isstring(def) then
+        return def
+    end
+end
+
+function SBMG:GetAnnouncerSound(ann, name, subname, force_generic)
+    if not ann or ann == "" then return false end
+    local tbl = SBMG.Announcers[ann]
+    if not tbl then return false end
+    local snd = nil
+
+    -- Attempt to find a gamemode-specific sound first
+    local cur_mg_tbl = tbl.MinigameLines and tbl.MinigameLines[SBMG:GetActiveGame()]
+    if not force_generic and cur_mg_tbl and cur_mg_tbl[name] ~= nil then
+        if cur_mg_tbl[name] == false then
+            -- Explicitly do not play any sound. This allows gamemode lines to stop generic lines from playing
+            return nil
+        elseif isstring(subname) and subname ~= nil and
+                istable(cur_mg_tbl[name]) and cur_mg_tbl[name][subname] then
+            snd = get_sound(cur_mg_tbl[name][subname])
+        else
+            snd = get_sound(cur_mg_tbl[name])
+        end
+    end
+
+    -- If not, resort to finding a generic sound
+    if not snd and tbl.GenericLines then
+        if isstring(subname) and subname ~= nil and
+                istable(tbl.GenericLines[name]) and tbl.GenericLines[name][subname] then
+            snd = get_sound(tbl.GenericLines[name][subname])
+        else
+            snd = get_sound(tbl.GenericLines[name])
+        end
+    end
+
+    return snd
+end
+
 -- Minigame default functions
 function SBMG:Timeout_TeamScore()
     local winner = nil
