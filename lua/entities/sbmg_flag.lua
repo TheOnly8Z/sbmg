@@ -38,18 +38,20 @@ if SERVER then
                 ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
             if ply:Team() ~= self:GetTeam() then
                 local swep = ply:Give("sbmg_flagwep")
-                if IsValid(swep) then
-                    swep:SetTeam(self:GetTeam())
-                    swep:SetStand(self:GetStand())
-                    if SBMG:GetGameOption("flag_hold") then
-                        ply:SetActiveWeapon(ply:GetWeapon("sbmg_flagwep"))
+                timer.Simple(0, function()
+                    if IsValid(swep) then
+                        swep:SetTeam(self:GetTeam())
+                        swep:SetStand(self:GetStand())
+                        if SBMG:GetGameOption("flag_hold") then
+                            ply:SetActiveWeapon(ply:GetWeapon("sbmg_flagwep"))
+                        end
+                        SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagTaken")
+                        SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagTaken")
+                        self:Remove()
+                    else
+                        error("Flag generated for " .. tostring(ply) .. " is not valid!")
                     end
-                    SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagTaken")
-                    SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagTaken")
-                    self:Remove()
-                else
-                    error("Flag generated for " .. tostring(ply) .. " is not valid!")
-                end
+                end)
             elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then
                 self:ReturnFlag()
             end
