@@ -106,8 +106,6 @@ if SERVER then
             if self:GetTeam() ~= TEAM_UNASSIGNED then
                 SBMG:SeparateTeamAnnouncer(self:GetTeam(), "TheirPointTaken", "OurPointTaken")
             end
-            --SBMG:SendTeamAnnouncer(oldTeam, "OurPointTaken")
-            --SBMG:SendTeamAnnouncer(self:GetTeam(), "TheirPointTaken")
         elseif self:GetCapTeam() ~= 0 and self:GetCapProgress() <= 0 then
             self:SetCapTeam(0)
             self:SetCapProgress(0)

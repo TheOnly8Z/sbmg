@@ -47,6 +47,8 @@ if SERVER then
                     SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagTaken")
                     SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagTaken")
                     self:Remove()
+                else
+                    error("Flag generated for " .. tostring(ply) .. " is not valid!")
                 end
             elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then
                 self:ReturnFlag()
