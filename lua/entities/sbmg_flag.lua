@@ -33,11 +33,22 @@ if SERVER then
         self:UseTriggerBounds(true, 12)
     end
 
+    local weapon_pickup_compatibility = nil
     function ENT:FlagPickup(ply)
         if ply:IsPlayer() and ply:Alive() and not ply:InVehicle() and ply ~= self:GetOwner() and
                 ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
             if ply:Team() ~= self:GetTeam() then
                 local swep = ply:Give("sbmg_flagwep")
+
+                -- Ugly hack: Check if Manual Weapon Pickup exists and cirvumvent it
+                if weapon_pickup_compatibility == nil then
+                    weapon_pickup_compatibility = (hook.GetTable().PlayerCanPickupWeapon.ManualWeaponPickup_CanPickup ~= nil)
+                end
+                if weapon_pickup_compatibility == true then
+                    ply.ManualWeaponPickupSpawn = CurTime() - 1
+                    swep.GiveTo = ply
+                end
+
                 if IsValid(swep) then
                     swep:SetTeam(self:GetTeam())
                     swep:SetStand(self:GetStand())
