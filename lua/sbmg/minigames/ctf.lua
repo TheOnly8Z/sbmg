@@ -40,7 +40,7 @@ function MINIGAME:GetParticipants()
 end
 
 function MINIGAME:CanStart()
-    if GetConVar("sv_manualweaponpickup") and GetConVar("sv_manualweaponpickup"):GetBool() then
+    if GetConVar("sv_manualweaponpickup") then -- if the convar exists, it is installed
         return false, "sbmg.manual_weapon_pickup"
     end
 end
