@@ -39,6 +39,12 @@ function MINIGAME:GetParticipants()
     return plys, teams
 end
 
+function MINIGAME:CanStart()
+    if GetConVar("sv_manualweaponpickup") and GetConVar("sv_manualweaponpickup"):GetBool() then
+        return false, "sbmg.manual_weapon_pickup"
+    end
+end
+
 function MINIGAME:GameStart()
     if SERVER then
         for _, ent in pairs(ents.FindByClass("sbmg_flagpole")) do
