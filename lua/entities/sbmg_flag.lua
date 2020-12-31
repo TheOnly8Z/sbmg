@@ -38,15 +38,19 @@ if SERVER then
         if ply:IsPlayer() and ply:Alive() and not ply:InVehicle() and ply ~= self:GetOwner() and
                 ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
             if ply:Team() ~= self:GetTeam() then
-                local swep = ply:Give("sbmg_flagwep")
+                local swep
 
                 -- Ugly hack: Check if Manual Weapon Pickup exists and cirvumvent it
                 if weapon_pickup_compatibility == nil then
                     weapon_pickup_compatibility = (hook.GetTable().PlayerCanPickupWeapon.ManualWeaponPickup_CanPickup ~= nil)
                 end
                 if weapon_pickup_compatibility == true then
-                    ply.ManualWeaponPickupSpawn = CurTime() - 1
+                    swep = ents.Create("sbmg_flagwep")
                     swep.GiveTo = ply
+                    ply.ManualWeaponPickupSpawn = CurTime() - 1
+                    swep:SetPos(ply:GetPos())
+                else
+                    swep = ply:Give("sbmg_flagwep")
                 end
 
                 if IsValid(swep) then
