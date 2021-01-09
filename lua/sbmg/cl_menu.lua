@@ -51,6 +51,12 @@ local function populate_options(layout, name)
             options[k] = vgui.Create("DCheckBox", parent)
             options[k]:SetPos(layout:GetWide() * 0.5 - 15 - 8, (24 - 15) / 2)
             options[k]:SetChecked(last_options[k] or v.default)
+        elseif v.type == "f" then
+            options[k] = vgui.Create("DNumSlider", parent)
+            options[k]:Dock(FILL)
+            options[k]:SetDecimals(v.decimals or 2)
+            options[k]:SetMinMax(v.min or 0, v.max or 1)
+            options[k]:SetValue(last_options[k] or v.default)
         end
     end
 end

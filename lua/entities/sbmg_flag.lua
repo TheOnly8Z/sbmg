@@ -38,7 +38,7 @@ if SERVER then
                 ply:Team() ~= TEAM_UNASSIGNED and self:GetTeam() ~= TEAM_UNASSIGNED then
             if ply:Team() ~= self:GetTeam() then
                 local swep = ply:Give("sbmg_flagwep")
-
+                -- Manual Weapon Pickup waits a tick and causes this check to fail. Can't be arsed to fix it
                 if IsValid(swep) then
                     swep:SetTeam(self:GetTeam())
                     swep:SetStand(self:GetStand())

@@ -23,7 +23,7 @@ MINIGAME.Options = {
     ["flag_return_time"] = {type = "i", min = 1, default = 60},
     ["flag_cap_need"] = {type = "b", default = false},
     ["flag_hold"] = {type = "b", default = true},
-    ["flag_slowdown"] = {type = "i", min = 0, max = 1, default = 0.75},
+    ["flag_slowdown"] = {type = "f", min = 0, max = 1, default = 0.75},
 }
 
 function MINIGAME:GetParticipants()
