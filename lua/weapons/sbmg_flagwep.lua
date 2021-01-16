@@ -97,6 +97,9 @@ if SERVER then
     function SWEP:SpawnFlagAndRemove(stand)
         self:SpawnFlag(stand)
         self.DONE = true
+        if self:GetOwner():GetActiveWeapon() == self then
+            self:GetOwner():ConCommand("lastinv")
+        end
         self:Remove()
     end
 

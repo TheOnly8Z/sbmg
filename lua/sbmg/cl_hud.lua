@@ -16,7 +16,7 @@ surface.CreateFont("SBMG_HUD2", {
     shadow = false
 })
 
-local showonhud = GetConVar("sbmg_cl_obj_showonhud")
+local showonhud = GetConVar("cl_sbmg_obj_showonhud")
 local mat_point = Material("sprites/sbmg_pointui.png", "mips smooth")
 
 local function DrawScore(tgt, rank, y)
