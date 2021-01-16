@@ -109,3 +109,13 @@ function SBMG:Timeout_TeamScore()
         return winner
     end
 end
+--hook.Add("PreDrawOutlines", "SBMG", function()
+function SBMG:Hook_Outlines_All(class)
+    local cvar = GetConVar("cl_sbmg_obj_outline"):GetInt()
+    if cvar > 0 and SBTM:IsTeamed(LocalPlayer()) and
+            (cvar == 1 or SBMG:GetActiveGame()) then
+        for _, e in pairs(ents.FindByClass(class)) do
+            outline.Add(e, e:GetTeam() == TEAM_UNASSIGNED and Color(255,255,255) or team.GetColor(e:GetTeam()), OUTLINE_MODE_NOTVISIBLE)
+        end
+    end
+end

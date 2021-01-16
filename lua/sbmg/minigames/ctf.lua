@@ -84,3 +84,7 @@ MINIGAME.Hooks.SBMG_FlagCaptured = function(ply, stand, flag_team)
         SBMG:SendTeamAnnouncer(flag_team, "OurFlagCaptured")
     end
 end
+MINIGAME.Hooks.PreDrawOutlines = function()
+    SBMG:Hook_Outlines_All("sbmg_flag")
+    SBMG:Hook_Outlines_All("sbmg_flagpole")
+end

@@ -75,6 +75,7 @@ function SBMG:MinigameStart(name, options)
 end
 
 function SBMG:MinigameEnd(winner)
+    if SBMG.ActiveGame.Name == nil then return end
     local name = SBMG.ActiveGame.Name
     local isTeam = not isentity(winner)
 

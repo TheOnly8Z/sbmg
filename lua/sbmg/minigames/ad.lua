@@ -91,3 +91,4 @@ MINIGAME.Hooks.SBMG_PointCaptured = function(ent, oldTeam)
         SBMG:MinigameEnd(ent:GetTeam())
     end
 end
+MINIGAME.Hooks.PreDrawOutlines = function() SBMG:Hook_Outlines_All("sbmg_point") end
