@@ -5,12 +5,13 @@ SWEP.Spawnable = false
 SWEP.Author = "8Z"
 SWEP.Instructions = "Holster to drop"
 
-SWEP.ViewModel = "models/props_sbmg/flag.mdl"
+SWEP.ViewModel = "models/props_sbmg/flag viewmodel.mdl"
 SWEP.WorldModel = "models/props_sbmg/flag.mdl"
 
 SWEP.Primary.Ammo = ""
 SWEP.Primary.ClipSize = -1
 SWEP.Secondary.Ammo = ""
+SWEP.UseHands = true
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "Team")
@@ -37,6 +38,11 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
+    if not GetConVar("sbmg_obj_simple"):GetBool() then
+        local seq, dur = self:LookupSequence("Draw")
+        self:GetOwner():GetViewModel():SendViewModelMatchingSequence(seq)
+        self:SetNextPrimaryFire(CurTime() + dur)
+    end
 end
 
 function SWEP:Holster()
@@ -47,6 +53,46 @@ function SWEP:Holster()
 end
 
 function SWEP:PrimaryAttack()
+    if GetConVar("sbmg_obj_simple"):GetBool() or self:GetNextPrimaryFire() > CurTime() then return end
+    local seq, dur = self:LookupSequence("Melee")
+    self:GetOwner():GetViewModel():SendViewModelMatchingSequence(seq)
+    self:SetNextPrimaryFire(CurTime() + dur)
+    self:EmitSound("weapons/slam/throw.wav")
+    self.AttackTime = CurTime() + 0.25
+    self:GetOwner():AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2, true)
+end
+
+function SWEP:Think()
+    if self.AttackTime and self.AttackTime <= CurTime() then
+        local dir = self:GetOwner():EyeAngles():Forward()
+        self.AttackTime = nil
+        self:FireBullets({
+            Attacker = self:GetOwner(),
+            Damage = 0,
+            Force = 100,
+            Distance = 96,
+            HullSize = 16,
+            Tracer = 0,
+            Dir = dir,
+            Src = self:GetOwner():EyePos(),
+            IgnoreEntity = self:GetOwner(),
+            Callback = function(attacker, tr, dmg)
+                if tr.HitWorld or tr.Hit then
+                    if SERVER and tr.Entity then
+                        dmg:SetDamage(100)
+                        dmg:SetDamageType(DMG_CLUB)
+                        dmg:SetInflictor(self)
+                        dmg:SetAttacker(self:GetOwner())
+                        dmg:SetDamageForce(attacker:EyeAngles():Forward() * 50000)
+                        dmg:SetDamagePosition(tr.HitPos)
+                        tr.Entity:TakeDamageInfo(dmg)
+                    end
+                    self:EmitSound("weapons/crowbar/crowbar_impact1.wav", 75, 100, 0.25)
+                end
+            end
+        })
+    end
+    if not IsValid(self:GetOwner()) then self:Remove() end
 end
 
 function SWEP:SecondaryAttack()
@@ -109,13 +155,25 @@ if SERVER then
         end
     end
 elseif CLIENT then
-    function SWEP:ShouldDrawViewModel()
-        return false
-    end
 
     function SWEP:DrawWorldModel(flags)
     end
+
+    local r, g, b
+    function SWEP:PreDrawViewModel(vm, ply, wep)
+        r, g, b = render.GetColorModulation()
+        local clr = team.GetColor(self:GetTeam())
+        render.SetColorModulation(clr.r / 255, clr.g / 255, clr.b / 255)
+    end
+
     if SBMG then
+
+        hook.Add("PreDrawPlayerHands", "SBMG_FlagWep", function(hands, wm, ply, wep)
+            if wep:GetClass() == "sbmg_flagwep" then
+                render.SetColorModulation(r, g, b)
+            end
+        end)
+
         hook.Add("PostPlayerDraw", "SBMG_FlagWep", function(ply)
             if not ply:Alive() or not ply:HasWeapon("sbmg_flagwep") then return end
             local wep = ply:GetWeapon("sbmg_flagwep")

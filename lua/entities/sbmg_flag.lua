@@ -43,16 +43,17 @@ if SERVER then
                     swep:SetTeam(self:GetTeam())
                     swep:SetStand(self:GetStand())
                     if SBMG:GetGameOption("flag_hold") then
-                        ply:SetActiveWeapon(ply:GetWeapon("sbmg_flagwep"))
+                        ply:SelectWeapon(ply:GetWeapon("sbmg_flagwep"))
                     end
                     SBMG:SendTeamAnnouncer(ply:Team(), "TheirFlagTaken")
                     SBMG:SendTeamAnnouncer(self:GetTeam(), "OurFlagTaken")
+                    self:GetStand().FlagEnt = swep
                     self:Remove()
                 else
                     error("Flag generated for " .. tostring(ply) .. " is not valid!")
                 end
             elseif not SBMG:GetActiveGame() or SBMG:GetGameOption("flag_return_touch") then
-                self:ReturnFlag()
+                self:ReturnFlag(false)
             end
         end
     end
@@ -69,12 +70,12 @@ if SERVER then
         if not IsValid(self:GetParent()) and self:GetDropTime() > 0 then
             local endtime = SBMG:GetGameOption("flag_return_time") or 60
             if endtime > 0 and self:GetDropTime() + endtime < CurTime() then
-                self:ReturnFlag()
+                self:ReturnFlag(false)
             end
         end
     end
 
-    function ENT:ReturnFlag()
+    function ENT:ReturnFlag(no_announcer)
         if IsValid(self:GetParent()) then return end
         local eff = EffectData()
         eff:SetEntity(self)
@@ -89,7 +90,9 @@ if SERVER then
             end
             self:SetAngles(stand:GetAngles())
             self:SetParent(self:GetStand())
-            SBMG:SeparateTeamAnnouncer(self:GetTeam(), "OurFlagReturned", "TheirFlagReturned")
+            if not no_announcer then
+                SBMG:SeparateTeamAnnouncer(self:GetTeam(), "OurFlagReturned", "TheirFlagReturned")
+            end
         else
             self:Remove()
         end

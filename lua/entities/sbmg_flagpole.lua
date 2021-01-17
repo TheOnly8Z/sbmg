@@ -86,7 +86,7 @@ if SERVER then
         elseif self.FlagEnt:GetClass() == "sbmg_flagwep" then
             self.FlagEnt:SpawnFlagAndRemove(true)
         elseif self.FlagEnt:GetParent() ~= self then
-            self.FlagEnt:ReturnFlag()
+            self.FlagEnt:ReturnFlag(true)
         end
     end
 
