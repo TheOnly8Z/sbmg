@@ -192,6 +192,28 @@ hook.Add("HUDPaint", "SBMG", function()
     end
 end)
 
+local function outline_class(class, mode)
+    for _, e in pairs(ents.FindByClass(class)) do
+        if mode == 3 or mode == 1 then
+            outline.Add(e, e:GetTeam() == TEAM_UNASSIGNED and Color(255,255,255) or team.GetColor(e:GetTeam()), OUTLINE_MODE_NOTVISIBLE)
+        elseif mode == 3 or mode == 2 then
+            -- Technically, PreDrawOutlines is right during PreDrawHalos so this should work
+            halo.Add(e, e:GetTeam() == TEAM_UNASSIGNED and Color(255,255,255) or team.GetColor(e:GetTeam()), 4, 4, true, true)
+        end
+    end
+end
+
+hook.Add("PreDrawHalos", "SBMG", function()
+    local cvar = GetConVar("cl_sbmg_obj_outline"):GetInt()
+    local mode = GetConVar("cl_sbmg_obj_outline_mode"):GetInt()
+    if cvar > 0 and SBTM:IsTeamed(LocalPlayer()) and mode > 0 and
+            (cvar == 2 or SBMG:GetActiveGame()) then
+        outline_class("sbmg_point", mode)
+        outline_class("sbmg_flag", mode)
+        outline_class("sbmg_flagpole", mode)
+    end
+end)
+
 -- TODO remove debug
 --[[]
 local bomb = Material("icon16/bomb.png")

@@ -92,4 +92,4 @@ MINIGAME.Hooks.PlayerDeath = function(ply, inflictor, attacker)
         end
     end
 end
-MINIGAME.Hooks.PreDrawOutlines = function() SBMG:Hook_Outlines_All("sbmg_point") end
+--MINIGAME.Hooks.PreDrawOutlines = function() SBMG:Hook_Outlines_All("sbmg_point") end
