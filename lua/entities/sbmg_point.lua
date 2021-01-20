@@ -118,7 +118,7 @@ if SERVER then
         local distSqr = math.pow(self:GetRadius(), 2)
         if self:GetCapTeam() > 0 then
             for _, p in pairs(player.GetAll()) do
-                if p:GetPos():DistToSqr(self:GetPos()) <= distSqr then
+                if IsValid(p) and p:Alive() and p:GetPos():DistToSqr(self:GetPos()) <= distSqr then
                     if p:Team() == self:GetCapTeam() then
                         cappers = cappers + 1
                     elseif p:Team() ~= TEAM_UNASSIGNED then
