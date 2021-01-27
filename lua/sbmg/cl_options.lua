@@ -30,7 +30,7 @@ hook.Add("PopulateToolMenu", "SBMG", function()
         pnl:CheckBox("#sbmg.cvar.cl.ann_disabled", "cl_sbmg_ann_disabled")
 
         local combobox3 = pnl:ComboBox("#sbmg.cvar.cl.ann_name", "cl_sbmg_ann_name")
-        cb:AddChoice("#sbmg.announcers.no_pref", "")
+        combobox3:AddChoice("#sbmg.announcers.no_pref", "")
         add_announcers(combobox3)
         pnl:ControlHelp("#sbmg.cvar.cl.ann_name.desc")
 
