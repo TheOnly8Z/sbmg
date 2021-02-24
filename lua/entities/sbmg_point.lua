@@ -7,6 +7,7 @@ ENT.Category = "Fun + Games"
 ENT.Spawnable = not game.SinglePlayer()
 ENT.AdminOnly = true
 ENT.SBTM_TeamEntity = true
+ENT.SBTM_NoPickup = true
 ENT.Editable = true
 ENT.ThinkDelay = 0.1
 ENT.PresetNames = {

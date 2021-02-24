@@ -6,6 +6,7 @@ ENT.Category = "Fun + Games"
 ENT.Spawnable = false
 ENT.AdminOnly = true
 
+ENT.SBTM_NoPickup = true
 
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "Team")

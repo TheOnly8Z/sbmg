@@ -7,6 +7,7 @@ ENT.Category = "Fun + Games"
 ENT.Spawnable = not game.SinglePlayer()
 ENT.AdminOnly = true
 ENT.SBTM_TeamEntity = true
+ENT.SBTM_NoPickup = true
 
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "Team")
