@@ -13,9 +13,7 @@ MINIGAME.MinTeams = 1
 MINIGAME.MinPlayers = 2
 
 MINIGAME.Options = {
-    ["time"] = {type = "i", min = 10, default = 180},
     ["kills_to_win"] = {type = "i", min = 1, default = 10},
-    ["suicide_penalty"] = {type = "b", default = false},
 }
 
 MINIGAME.Tags = SBMG_TAG_FORCE_FRIENDLY_FIRE
@@ -25,10 +23,6 @@ function MINIGAME:GetParticipants()
 end
 
 function MINIGAME:GameStart()
-end
-
-function MINIGAME:Think()
-
 end
 
 function MINIGAME:Timeout()

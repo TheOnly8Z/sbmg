@@ -40,18 +40,20 @@ function MINIGAME:GameStart()
 end
 
 function MINIGAME:Think()
-    local winner = nil
-    for t, s in pairs(SBMG.TeamScore) do
-        if team.NumPlayers(t) > 0 then
-            if not winner then
-                winner = t
-            else
-                return
+    if SERVER then
+        local winner = nil
+        for t, s in pairs(SBMG.TeamScore) do
+            if team.NumPlayers(t) > 0 then
+                if not winner then
+                    winner = t
+                else
+                    return
+                end
             end
         end
-    end
-    if winner then
-        SBMG:MinigameEnd(winner)
+        if winner then
+            SBMG:MinigameEnd(winner)
+        end
     end
 end
 

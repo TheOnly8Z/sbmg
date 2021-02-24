@@ -16,7 +16,7 @@ ANNOUNCER.GenericLines = {
     Tie = "misc/your_team_stalemate.mp3",
 
     EndCountdown = { -- Number index indicates the seconds left
-        [500] = "vo/announcer_ends_5min.mp3",
+        [300] = "vo/announcer_ends_5min.mp3",
         [60] = "vo/announcer_ends_60sec.mp3",
         [30] = "vo/announcer_ends_30sec.mp3",
         [10] = "vo/announcer_ends_10sec.mp3",
@@ -25,12 +25,23 @@ ANNOUNCER.GenericLines = {
         [3] = "vo/announcer_ends_3sec.mp3",
         [2] = "vo/announcer_ends_2sec.mp3",
         [1] = "vo/announcer_ends_1sec.mp3",
+    },
+
+    PregameCountdown = {
+        [60] = "vo/announcer_begins_60sec.mp3",
+        [30] = "vo/announcer_begins_30sec.mp3",
+        [10] = "vo/announcer_begins_10sec.mp3",
+        [5] = "vo/announcer_begins_5sec.mp3",
+        [4] = "vo/announcer_begins_4sec.mp3",
+        [3] = "vo/announcer_begins_3sec.mp3",
+        [2] = "vo/announcer_begins_2sec.mp3",
+        [1] = "vo/announcer_begins_1sec.mp3",
     }
 }
 
 ANNOUNCER.MinigameLines = {
     ctf = {
-        Start = "vo/announcer_capture_intel.mp3",
+        Pregame = "vo/announcer_capture_intel.mp3",
         OurFlagTaken = {"vo/intel_enemystolen.mp3", "vo/intel_enemystolen2.mp3", "vo/intel_enemystolen3.mp3", "vo/intel_enemystolen4.mp3"},
         OurFlagDropped = {"vo/intel_enemydropped.mp3", "vo/intel_enemydropped2.mp3"},
         OurFlagCaptured = {"vo/intel_enemycaptured.mp3", "vo/intel_enemycaptured2.mp3"},
@@ -59,7 +70,7 @@ ANNOUNCER.MinigameLines = {
         TheirPointTaken = {"vo/announcer_we_secured_control.mp3", "vo/announcer_we_captured_control.mp3"},
     },
     dom = {
-        Start = "vo/announcer_capture_controlpoints.mp3",
+        Pregame = "vo/announcer_capture_controlpoints.mp3",
         OurPointCapture = {"vo/announcer_control_point_warning.mp3", "vo/announcer_control_point_warning2.mp3", "vo/announcer_control_point_warning3.mp3"},
         OurPointTaken = "vo/announcer_we_lost_control.mp3",
         TheirPointCapture = nil,

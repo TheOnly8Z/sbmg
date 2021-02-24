@@ -27,7 +27,7 @@ function SBMG:MinigameStart(name, options)
 
     SBMG.ActiveGame.Name = name
     SBMG.ActiveGame.Options = options
-    SBMG.ActiveGame.StartTime = CurTime()
+    SBMG.ActiveGame.StartTime = CurTime() + (SBMG.ActiveGame.Options["pregame_time"] or 0)
     for _, p in pairs(plys) do SBMG.ActivePlayers[p] = 0 end
     if SBMG.Minigames[name].TeamScores then
         for _, t in pairs(teams) do SBMG.TeamScore[t] = 0 end
@@ -37,7 +37,11 @@ function SBMG:MinigameStart(name, options)
         hook.Add(k, "SBMG_Minigame", v)
     end
 
-    SBMG:BroadcastAnnouncer("Start")
+    if (SBMG.ActiveGame.Options["pregame_time"] or 0) == 0 then
+        SBMG:BroadcastAnnouncer("Start")
+    else
+        SBMG:BroadcastAnnouncer("Pregame")
+    end
 
     SBMG.Minigames[name]:GameStart()
 

@@ -18,7 +18,6 @@ MINIGAME.MinEnts = {
 MINIGAME.Options = {
     ["time"] = {type = "i", min = 60, default = 600},
     ["score_to_win"] = {type = "i", min = 1, default = 300},
-    ["tp_on_start"] = {type = "b", default = true},
     ["auto_cap"] = {type = "b", default = false},
     ["clear_cap"] = {type = "b", default = true},
     ["show_radius"] = {type = "b", default = true},
@@ -49,7 +48,7 @@ function MINIGAME:GameStart()
 end
 
 function MINIGAME:Think()
-    if (SBMG.NextThink or 0) < CurTime() then
+    if SERVER and (SBMG.NextThink or 0) < CurTime() then
         SBMG.NextThink = CurTime() + 1
         local add = {}
         for _, ent in pairs(ents.FindByClass("sbmg_point")) do

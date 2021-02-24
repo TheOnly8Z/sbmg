@@ -56,7 +56,18 @@ local function get_sound(def)
     end
 end
 
-function SBMG:GetAnnouncerSound(ann, name, subname, force_generic)
+function SBMG:GetAnnouncer()
+    if SERVER or GetConVar("sbmg_ann_enforce"):GetBool() then
+        return GetConVar("sbmg_ann_name"):GetString()
+    elseif CLIENT then
+        local ann = GetConVar("cl_sbmg_ann_name"):GetString()
+        if ann == "" then ann = GetConVar("sbmg_ann_name"):GetString() end
+        return ann
+    end
+end
+
+function SBMG:GetAnnouncerSound(name, subname, force_generic)
+    local ann = SBMG:GetAnnouncer()
     if not ann or ann == "" then return false end
     local tbl = SBMG.Announcers[ann]
     if not tbl then return false end

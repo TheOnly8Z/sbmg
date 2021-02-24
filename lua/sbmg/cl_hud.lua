@@ -174,7 +174,9 @@ hook.Add("HUDPaint", "SBMG", function()
     -- Draw time if applicable
     local t = SBMG:GetGameOption("time")
     local t_tbl
-    if (t or 0) > 0 then
+    if SBMG.ActiveGame.StartTime > CurTime() then -- Pregame
+        t_tbl = string.FormattedTime(math.ceil(SBMG.ActiveGame.StartTime - CurTime()))
+    elseif (t or 0) > 0 then
         t_tbl = string.FormattedTime(math.ceil(SBMG.ActiveGame.StartTime + t - CurTime()))
     else
         t_tbl = string.FormattedTime(math.ceil(CurTime() - SBMG.ActiveGame.StartTime))

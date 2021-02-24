@@ -50,9 +50,6 @@ function MINIGAME:GameStart()
     SBMG.TeamScore[SBTM_BLU] = #points
 end
 
-function MINIGAME:Think()
-end
-
 function MINIGAME:Timeout()
     return SBTM_BLU
 end

@@ -42,7 +42,8 @@ SBMG.ActiveAnnouncer = nil
 
 SBMG.BaseMinigameOptions = {
     ["time"] = {type = "i", min = 60, default = 120},
-    ["pregame_time"] = {type = "i", min = 0, default = 10},
+    ["pregame_time"] = {type = "i", min = 0, default = 5},
+    ["pregame_freeze"] = {type = "b", default = true},
     ["tp_on_start"] = {type = "b", default = true},
 }
 

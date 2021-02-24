@@ -26,11 +26,13 @@ function MINIGAME:GameStart()
 end
 
 function MINIGAME:Think()
-    local plys = team.GetPlayers(SBTM_RED)
-    if table.Count(plys) == 0 then
-        SBMG:MinigameEnd(nil)
-    elseif table.Count(plys) == 1 then
-        SBMG:MinigameEnd(plys[1])
+    if SERVER then
+        local plys = team.GetPlayers(SBTM_RED)
+        if table.Count(plys) == 0 then
+            SBMG:MinigameEnd(nil)
+        elseif table.Count(plys) == 1 then
+            SBMG:MinigameEnd(plys[1])
+        end
     end
 end
 

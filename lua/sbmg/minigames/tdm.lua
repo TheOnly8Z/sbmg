@@ -14,8 +14,6 @@ MINIGAME.MinPlayers = 2
 
 MINIGAME.Options = {
     ["kills_to_win"] = {type = "i", min = 1, default = 20},
-    ["tk_penalty"] = {type = "b", default = false},
-    ["suicide_penalty"] = {type = "b", default = false},
 }
 
 function MINIGAME:GetParticipants()
@@ -33,9 +31,6 @@ function MINIGAME:GetParticipants()
 end
 
 function MINIGAME:GameStart()
-end
-
-function MINIGAME:Think()
 end
 
 function MINIGAME:Timeout()

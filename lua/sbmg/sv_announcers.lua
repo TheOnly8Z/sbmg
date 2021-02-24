@@ -1,6 +1,6 @@
 function SBMG:SendAnnouncer(players, name, subname, force_generic)
     if GetConVar("sbmg_ann_enforce"):GetBool() then
-        local snd = SBMG:GetAnnouncerSound(GetConVar("sbmg_ann_name"):GetString(), name, subname, force_generic)
+        local snd = SBMG:GetAnnouncerSound(name, subname, force_generic)
         if snd then
             net.Start("SBMG_Announce")
                 net.WriteString(snd)

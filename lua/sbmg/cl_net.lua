@@ -7,7 +7,7 @@ net.Receive("SBMG_Game", function()
 
         SBMG.ActiveGame.Name = name
         SBMG.ActiveGame.Options = options
-        SBMG.ActiveGame.StartTime = CurTime()
+        SBMG.ActiveGame.StartTime = CurTime() + (options["pregame_time"] or 0)
         local plys, teams = SBMG.Minigames[name]:GetParticipants()
         for _, p in pairs(plys) do SBMG.ActivePlayers[p] = 0 end
         if SBMG.Minigames[name].TeamScores then

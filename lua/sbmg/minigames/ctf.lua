@@ -18,7 +18,6 @@ MINIGAME.MinEnts = {
 MINIGAME.Options = {
     ["time"] = {type = "i", min = 60, default = 600},
     ["score_to_win"] = {type = "i", min = 1, default = 3},
-    ["tp_on_start"] = {type = "b", default = true},
     ["flag_return_touch"] = {type = "b", default = true},
     ["flag_return_time"] = {type = "i", min = 1, default = 60},
     ["flag_cap_need"] = {type = "b", default = false},
@@ -53,11 +52,6 @@ function MINIGAME:GameStart()
         end
     end
 end
-
---[[]
-function MINIGAME:Think()
-end
-]]
 
 function MINIGAME:Timeout()
     return SBMG:Timeout_TeamScore()
