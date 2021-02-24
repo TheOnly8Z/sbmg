@@ -14,7 +14,6 @@ MINIGAME.MinPlayers = 2
 
 MINIGAME.Options = {
     ["time"] = {type = "i", min = 10, default = 300},
-    ["tp_on_start"] = {type = "b", default = true},
 }
 
 MINIGAME.Tags = SBMG_TAG_FORCE_FRIENDLY_FIRE + SBMG_TAG_UNASSIGN_ON_DEATH

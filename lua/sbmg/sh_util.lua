@@ -62,7 +62,7 @@ function SBMG:GetAnnouncerSound(ann, name, subname, force_generic)
     if not tbl then return false end
     local snd = nil
 
-    -- Attempt to find a gamemode-specific sound first
+    -- Attempt to find a minigame-specific sound first
     local cur_mg_tbl = tbl.MinigameLines and tbl.MinigameLines[SBMG:GetActiveGame()]
     if not force_generic and cur_mg_tbl and cur_mg_tbl[name] ~= nil then
         if cur_mg_tbl[name] == false then

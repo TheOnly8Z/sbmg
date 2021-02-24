@@ -8,6 +8,15 @@ hook.Add("PopulateToolMenu", "SBMG", function()
     spawnmenu.AddToolMenuOption("Utilities", "Admin", "SBMG_Server", "#sbmg.title.short", "", "", function(pnl)
         pnl:Help("#sbmg.menuhelp")
         pnl:Help("")
+
+        pnl:CheckBox("#sbmg.cvar.ann_enforce", "sbmg_ann_enforce")
+        pnl:ControlHelp("#sbmg.cvar.ann_enforce.desc")
+
+        local combobox = pnl:ComboBox("#sbmg.cvar.ann_name", "sbmg_ann_name")
+        combobox:AddChoice("#sbmg.announcers.none", "")
+        add_announcers(combobox)
+        pnl:ControlHelp("#sbmg.cvar.ann_name.desc")
+
         pnl:Help("#sbtm.authorhelp")
         pnl:Help("")
     end)

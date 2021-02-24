@@ -122,19 +122,6 @@ function SBMG:MinigameEnd(winner)
     net.Broadcast()
 end
 
-function SBMG:Think()
-    local tbl = SBMG:GetCurrentGameTable()
-    if tbl then
-        local t = SBMG:GetGameOption("time")
-        if t and SBMG.ActiveGame.StartTime + t <= CurTime() then
-            SBMG:MinigameEnd(tbl.Timeout and tbl:Timeout() or nil)
-        elseif tbl.Think then
-            tbl:Think()
-        end
-    end
-end
-hook.Add("Think", "SBMG", SBMG.Think)
-
 function SBMG:AddScore(tgt, amt)
     if isentity(tgt) then
         SBMG.ActivePlayers[tgt] = (SBMG.ActivePlayers[tgt] or 0) + amt

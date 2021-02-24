@@ -12,10 +12,7 @@ MINIGAME.TeamScores = true
 MINIGAME.MinTeams = 2
 MINIGAME.MinPlayers = 2
 
-MINIGAME.Options = {
-    ["time"] = {type = "i", min = 10, default = 300},
-    ["tp_on_start"] = {type = "b", default = true},
-}
+MINIGAME.Options = {}
 
 MINIGAME.Tags = SBMG_TAG_UNASSIGN_ON_DEATH
 

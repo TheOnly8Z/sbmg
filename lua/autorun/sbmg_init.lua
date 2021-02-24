@@ -10,7 +10,8 @@ SBMG_NET_MODE_INTERRUPT = 2
 SBMG_NET_MODE_TIE = 3
 SBMG_NET_MODE_BITS = 2
 
--- Override SBTM's no friendly fire option
+-- Override SBTM's no friendly fire option (for FFA games where everyone is on one team but isn't allied)
+-- This also disables team outlines
 SBMG_TAG_FORCE_FRIENDLY_FIRE = 1
 -- Override SBTM's unassign on death option
 SBMG_TAG_UNASSIGN_ON_DEATH = 2
@@ -39,6 +40,12 @@ SBMG.TeamScore = {}
 SBMG.Announcers = SBMG.Announcers or {}
 SBMG.ActiveAnnouncer = nil
 
+SBMG.BaseMinigameOptions = {
+    ["time"] = {type = "i", min = 60, default = 120},
+    ["pregame_time"] = {type = "i", min = 0, default = 10},
+    ["tp_on_start"] = {type = "b", default = true},
+}
+
 function SBMG:Load()
     -- Lua Files
     for _, v in pairs(file.Find("sbmg/*", "LUA")) do
@@ -61,8 +68,17 @@ function SBMG:Load()
         AddCSLuaFile("sbmg/minigames/" .. v)
         include("sbmg/minigames/" .. v)
         local name = string.Explode(".", v)[1]
+        if MINIGAME.Ignore then continue end
+        if not MINIGAME.DoNotInherit then
+            --MINIGAME.Options = table.Inherit(MINIGAME.Options, SBMG.BaseMinigameOptions)
+            for k, l in pairs(SBMG.BaseMinigameOptions) do -- table.Inherit is evil and we must steer clear
+                if not MINIGAME.Options[k] then
+                    MINIGAME.Options[k] = l
+                end
+            end
+        end
+        MINIGAME.SortOrder = MINIGAME.SortOrder or 0
         SBMG.Minigames[name] = MINIGAME
-        SBMG.Minigames[name].SortOrder = SBMG.Minigames[name].SortOrder or 0
         print("[SBMG] Loaded minigame '" .. name .. "'.")
     end
 

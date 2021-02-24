@@ -15,7 +15,6 @@ MINIGAME.MinPlayers = 2
 MINIGAME.Options = {
     ["time"] = {type = "i", min = 10, default = 180},
     ["kills_to_win"] = {type = "i", min = 1, default = 10},
-    ["tp_on_start"] = {type = "b", default = true},
     ["suicide_penalty"] = {type = "b", default = false},
 }
 

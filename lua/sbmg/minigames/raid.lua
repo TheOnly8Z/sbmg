@@ -18,9 +18,7 @@ MINIGAME.MinEnts = {
 MINIGAME.Tags = SBMG_TAG_DIRECT_CAPTURE_POINT + SBMG_TAG_UNASSIGN_ON_DEATH
 
 MINIGAME.Options = {
-    ["time"] = {type = "i", min = 60, default = 120},
     ["score_to_win"] = {type = "i", min = 1, default = 1},
-    ["tp_on_start"] = {type = "b", default = true},
     ["show_radius"] = {type = "b", default = true},
     ["auto_cap"] = {type = "b", default = false},
 }
