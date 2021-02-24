@@ -181,6 +181,7 @@ hook.Add("HUDPaint", "SBMG", function()
     end
     local str = string.format("%02i", t_tbl.s)
     if t_tbl.h > 0 then str = t_tbl.h .. ":" .. string.format("%02i", t_tbl.m) .. ":" .. str
+    elseif t == 0 then str = string.format("%02i", t_tbl.m) .. ":" .. str
     else str = t_tbl.m .. ":" .. str end
     draw.SimpleTextOutlined(str, "SBMG_HUD2", ScrW() * 0.5, y, Color(255, 255, 255),  TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 50))
 
