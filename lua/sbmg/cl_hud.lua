@@ -173,9 +173,16 @@ hook.Add("HUDPaint", "SBMG", function()
 
     -- Draw time if applicable
     local t = SBMG:GetGameOption("time")
-    if t then
-        draw.SimpleTextOutlined(math.ceil(SBMG.ActiveGame.StartTime + t - CurTime()) .. "s", "SBMG_HUD2", ScrW() * 0.5, y, Color(255, 255, 255),  TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 50))
+    local t_tbl
+    if (t or 0) > 0 then
+        t_tbl = string.FormattedTime(math.ceil(SBMG.ActiveGame.StartTime + t - CurTime()))
+    else
+        t_tbl = string.FormattedTime(math.ceil(CurTime() - SBMG.ActiveGame.StartTime))
     end
+    local str = string.format("%02i", t_tbl.s)
+    if t_tbl.h > 0 then str = t_tbl.h .. ":" .. string.format("%02i", t_tbl.m) .. ":" .. str
+    else str = t_tbl.m .. ":" .. str end
+    draw.SimpleTextOutlined(str, "SBMG_HUD2", ScrW() * 0.5, y, Color(255, 255, 255),  TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, 50))
 
     -- Draw top left individual scores
     local ranked = table.GetKeys(SBMG.ActivePlayers)

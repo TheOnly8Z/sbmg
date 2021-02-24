@@ -4,7 +4,7 @@ function SBMG:Think()
     if tbl then
         local t = SBMG:GetGameOption("time")
         local te = CurTime() - SBMG.ActiveGame.StartTime -- time elapsed
-        if t and te > t then
+        if (t or 0) > 0 and te > t then
             -- SBMG:MinigameEnd() will broadcast to client, so we don't call it clientside here
             if SERVER then SBMG:MinigameEnd(tbl.Timeout and tbl:Timeout() or nil) end
         else
