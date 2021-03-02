@@ -89,6 +89,9 @@ function SBMG:Load()
         AddCSLuaFile("sbmg/announcers/" .. v)
         include("sbmg/announcers/" .. v)
         local name = string.Explode(".", v)[1]
+        -- Allow announcers to disable itself (used by TF2 announcer if not mounted)
+        if (isbool(ANNOUNCER.Ignore) and ANNOUNCER.Ignore) or (isfunction(ANNOUNCER.Ignore) and ANNOUNCER.Ignore()) then continue end
+
         SBMG.Announcers[name] = ANNOUNCER
         SBMG.Announcers[name].SortOrder = SBMG.Announcers[name].SortOrder or 0
         print("[SBMG] Loaded announcer '" .. name .. "'.")

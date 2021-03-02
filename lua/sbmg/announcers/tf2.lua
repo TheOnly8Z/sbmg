@@ -3,6 +3,8 @@ ANNOUNCER.Description = "#sbmg.announcers.tf2.desc"
 
 ANNOUNCER.SortOrder = 1
 
+ANNOUNCER.Ignore = function() return not IsMounted("tf") end
+
 ANNOUNCER.GenericLines = {
     Start = {
         "vo/announcer_am_roundstart01.mp3",
