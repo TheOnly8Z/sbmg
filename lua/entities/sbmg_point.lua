@@ -18,12 +18,12 @@ ENT.JokeNames = {
     [1] = {"Arctic", "Astolfo", "Ass"},
     [2] = {"Burger Town", "BoyNextDoor", "Britain"},
     [3] = "Cum Zone",
-    [4] = "Deez Nuts",
-    [5] = "Egg",
+    [4] = {"Deez Nuts", "Donkey Kong"},
+    [5] = {"Egg", "EZ"},
     [6] = {"Faker", "France"},
     [7] = {"Gamer", "Garry", "Gnomed"},
     [8] = "Hentai",
-    [9] = nil, -- Really out of ideas here
+    [9] = "Intelligence",
     [10] = {"Japan", "Jesus"},
     [11] = {"Knight", "Knife"},
     [12] = {"Loser", "Ligma"},
@@ -122,7 +122,7 @@ if SERVER then
                 if IsValid(p) and p:Alive() and p:GetPos():DistToSqr(self:GetPos()) <= distSqr then
                     if p:Team() == self:GetCapTeam() then
                         cappers = cappers + 1
-                    elseif p:Team() ~= TEAM_UNASSIGNED then
+                    elseif SBTM:IsTeamed(p) then
                         defenders = defenders + 1
                     end
                 end
