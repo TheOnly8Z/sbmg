@@ -1,4 +1,5 @@
 if game.SinglePlayer() then return end
+if engine.ActiveGamemode() ~= "sandbox" and not GetConVar("sbtm_alwaysload"):GetBool() then return end
 
 AddCSLuaFile()
 
