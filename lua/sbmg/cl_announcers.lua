@@ -19,6 +19,7 @@ function SBMG:PlayAnnouncerCountdown(time, pregame)
     elseif CLIENT then
         ann = GetConVar("cl_sbmg_ann_name"):GetString()
     end
+    if not SBMG.Announcers[ann] then return end
 
     local tbl = SBMG.Announcers[ann].GenericLines -- TODO make minigame-specific countdown a thing?
     if not pregame and (not tbl or not tbl.EndCountdown or not tbl.EndCountdown[time]) then return false end
