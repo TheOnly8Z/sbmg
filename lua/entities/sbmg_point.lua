@@ -167,6 +167,9 @@ if SERVER then
         self:SetCapProgress(0)
     end
 
+    function ENT:UpdateTransmitState()
+        return TRANSMIT_ALWAYS
+    end
 elseif CLIENT then
     local mat = Material("sprites/sbmg_aura.png")
 

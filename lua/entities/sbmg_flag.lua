@@ -98,6 +98,10 @@ if SERVER then
             self:Remove()
         end
     end
+
+    function ENT:UpdateTransmitState()
+        return TRANSMIT_ALWAYS
+    end
 elseif CLIENT then
     function ENT:Draw()
         self:SetColor(self:GetTeam() == TEAM_UNASSIGNED and Color(255,255,255) or team.GetColor(self:GetTeam()))
