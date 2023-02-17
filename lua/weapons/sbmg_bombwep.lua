@@ -47,7 +47,7 @@ function SWEP:PrimaryAttack()
 
     local bombsite, d = nil, 0
     for _, ent in ipairs(ents.FindByClass("sbmg_bombsite")) do
-        if ent:GetTeam() == self:GetOwner():Team() then continue end
+        if IsValid(ent:GetBomb()) or ent:GetTeam() == self:GetOwner():Team() then continue end
         local dist = ent:GetPos():Distance(self:GetOwner():GetPos())
         if dist > ent:GetRadius() then continue end
         if not bombsite or d > dist then
@@ -65,7 +65,9 @@ end
 
 function SWEP:Think()
     if self:GetPlanting() > 0 then
-        if not self:GetOwner():KeyDown(IN_ATTACK) or not IsValid(self:GetBombsite()) or self:GetBombsite():GetPos():Distance(self:GetPos()) > self:GetBombsite():GetRadius() then
+        if not self:GetOwner():KeyDown(IN_ATTACK) or not IsValid(self:GetBombsite())
+                or IsValid(self:GetBombsite():GetBomb())
+                or self:GetBombsite():GetPos():Distance(self:GetPos()) > self:GetBombsite():GetRadius() then
             self:SetHoldType("slam")
             self:SetPlanting(0)
             self:GetOwner():GetViewModel():SendViewModelMatchingSequence(self:LookupSequence("idle"))
