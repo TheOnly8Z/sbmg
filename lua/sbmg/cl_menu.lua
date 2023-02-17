@@ -113,24 +113,26 @@ list.Set( "DesktopWindows", "SBMG", {
         desc.Paint = function(self, w, h)
             local _, data = gamebox:GetSelected()
             if data then
-                local words = string.Explode(" ", language.GetPhrase(SBMG.Minigames[data].Description))
-                local i = 0
-                local s = ""
-                local y = 0
-                for _, v in pairs(words) do
-                    if i + string.len(v) >= 22 then
-                        draw.SimpleText(s, "Futura_18", w * 0.5, y, Color(0, 0, 0), TEXT_ALIGN_CENTER)
-                        s = v .. " "
-                        i = string.len(v)
-                        y = y + 12
-                    else
-                        s = s .. v .. " "
-                        i = i + string.len(v)
-                    end
+                local tw = left:GetWide() - 8
+                local words = SBTM:MultilineText(language.GetPhrase(SBMG.Minigames[data].Description), tw, "Futura_18")
+                for i, text in ipairs(words) do
+                    draw.SimpleText(text, "Futura_18", w * 0.5, 12 * (i - 1), Color(0, 0, 0), TEXT_ALIGN_CENTER)
                 end
-                if s ~= "" then
-                    draw.SimpleText(s, "Futura_18", w * 0.5, y, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+
+                local maxt = (SBMG.Minigames[data].MaxTeams or 4)
+                local participate = language.GetPhrase("sbmg.playing." .. maxt)
+                if maxt == 1 then
+                    participate = string.format(participate, team.GetName(SBTM_RED))
+                elseif maxt == 2 then
+                    participate = string.format(participate, team.GetName(SBTM_RED), team.GetName(SBTM_BLU))
+                elseif maxt == 3 then
+                    participate = string.format(participate, team.GetName(SBTM_GRN))
                 end
+                local words2 = SBTM:MultilineText(participate, tw, "Futura_13")
+                for i, text in ipairs(words2) do
+                    draw.SimpleText(text, "Futura_13", w * 0.5, (#words + 1) * 12 + 12 * (i - 1), Color(0, 0, 0), TEXT_ALIGN_CENTER)
+                end
+
             end
         end
 
@@ -225,20 +227,24 @@ list.Set( "DesktopWindows", "SBMG", {
                 surface.DrawTexturedRect( 4, 8, 16, 16 )
             end
             if data and teams then
-                local text = string.format(language.GetPhrase("sbmg.min.teams"), table.Count(teams), SBMG.Minigames[data].MinTeams or 0)
-                draw.SimpleText(text, "Futura_24", 24, check_min:GetTall() / 3 + 8, Color(0, 0, 0), TEXT_ALIGN_LEFT)
-                surface.SetDrawColor(255, 255, 255, 255)
-                surface.SetMaterial((SBMG.Minigames[data].MinTeams or 0) > table.Count(teams) and cross or tick)
-                surface.DrawTexturedRect( 4, check_min:GetTall() / 3 + 12, 16, 16 )
+                if (SBMG.Minigames[data].MaxTeams or 4) > 1 and (SBMG.Minigames[data].MaxTeams or 4) ~= SBMG.Minigames[data].MinTeams then
+                    local text = string.format(language.GetPhrase("sbmg.min.teams"), table.Count(teams), SBMG.Minigames[data].MinTeams or 0)
+                    draw.SimpleText(text, "Futura_24", 24, check_min:GetTall() / 3 + 8, Color(0, 0, 0), TEXT_ALIGN_LEFT)
+                    surface.SetDrawColor(255, 255, 255, 255)
+                    surface.SetMaterial((SBMG.Minigames[data].MinTeams or 0) > table.Count(teams) and cross or tick)
+                    surface.DrawTexturedRect( 4, check_min:GetTall() / 3 + 12, 16, 16 )
+                end
 
                 local x = 4
                 for i = SBTM_RED, SBTM_YEL do
                     local clr = team.GetColor(i)
                     if table.HasValue(teams, i) then
                         surface.SetDrawColor(255, 255, 255, 255)
-                    else
+                    elseif (i - SBTM_RED) < (SBMG.Minigames[data].MaxTeams or 4) then
                         surface.SetDrawColor(255, 255, 255, 150)
                         clr.a = 150
+                    else
+                        continue
                     end
                     surface.SetMaterial(SBMG.FlagMaterials[i])
                     surface.DrawTexturedRect( x, check_min:GetTall() / 3 * 2 + 12, 16, 16 )
@@ -296,13 +302,13 @@ list.Set( "DesktopWindows", "SBMG", {
                         end
                         local ent = scripted_ents.Get(class)
                         local text
-                        if count > 0 then
-                            text = string.format(language.GetPhrase("sbmg.min.ent"), ent.ShortName or ent.PrintName, t, math.abs(count))
-                        else
-                            local sum = 0
-                            for _, s in pairs(t) do sum = sum + s end
-                            text = string.format(language.GetPhrase("sbmg.min.ent"), ent.ShortName or ent.PrintName, sum, math.abs(count))
+                        local c = t
+                        if count < 0 then
+                            c = 0
+                            for _, s in pairs(t) do c = c + s end
                         end
+                        text = string.format(language.GetPhrase("sbmg.min.ent"), language.GetPhrase(class .. ".count") or ent.ShortName or ent.PrintName, c, math.abs(count))
+
                         surface.SetDrawColor( 255, 255, 255, 255 )
                         surface.SetMaterial(can and tick or cross)
                         surface.DrawTexturedRect( 4, 8, 16, 16 )

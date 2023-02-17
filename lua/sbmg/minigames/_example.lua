@@ -31,6 +31,9 @@ MINIGAME.TeamScores = false
 -- Minimum amount of teams (with players in it) to start a game.
 MINIGAME.MinTeams = 1
 
+-- Maximum amount of teams that can participate. If unset, all teams with players participate.
+MINIGAME.MaxTeams = nil
+
 -- Minimum amount of total players to start a game.
 MINIGAME.MinPlayers = 2
 

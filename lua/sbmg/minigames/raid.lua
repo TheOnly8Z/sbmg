@@ -10,6 +10,7 @@ end
 
 MINIGAME.TeamScores = true
 MINIGAME.MinTeams = 2
+MINIGAME.MaxTeams = 2
 MINIGAME.MinPlayers = 2
 MINIGAME.MinEnts = {
     ["sbmg_point"] = 1, -- Negative means X per team

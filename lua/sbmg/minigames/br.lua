@@ -10,6 +10,7 @@ end
 
 MINIGAME.TeamScores = false
 MINIGAME.MinTeams = 1
+MINIGAME.MaxTeams = 1
 MINIGAME.MinPlayers = 2
 
 MINIGAME.Options = {
