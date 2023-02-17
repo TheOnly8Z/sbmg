@@ -21,4 +21,10 @@ hook.Add("SetupMove", "SBMG", function(ply, mv, cmd)
         mv:SetMaxSpeed(basespd * s)
         mv:SetMaxClientSpeed(basespd * s)
     end
+
+    local bomb = ply:GetWeapon("sbmg_bombwep")
+    if IsValid(bomb) and bomb:GetPlanting() > 0 then
+        mv:SetMaxSpeed(0.00001)
+        mv:SetMaxClientSpeed(0.00001)
+    end
 end)
