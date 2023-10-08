@@ -68,7 +68,38 @@ if SERVER then
         return TRANSMIT_ALWAYS
     end
 elseif CLIENT then
+    local mat = Material("sprites/sbmg_aura.png")
+
+    local function circle(s, r, g, b, a)
+        surface.SetDrawColor(r, g, b, a or 50)
+        surface.SetMaterial(mat)
+        surface.DrawTexturedRect(-s / 2, -s / 2, s, s)
+    end
+
     function ENT:Draw()
         self:DrawModel()
+    end
+
+    if SBMG then
+        hook.Add("PostDrawOpaqueRenderables", "SBMG_Bombsite", function()
+            if SBMG:GetActiveGame() and not SBMG:GetGameOption("show_radius") then return end
+            for k, ent in pairs(ents.FindByClass("sbmg_bombsite")) do
+                if not ent:GetEnabled() then continue end
+                local mins, maxs = ent:WorldSpaceAABB()
+                local pos = ent:WorldSpaceCenter() - Vector(0, 0, (maxs.z - mins.z) / 2 + math.sin(CurTime() * 2) * 4 - 8)
+                local angle = ent:GetAngles()
+                local clr = (ent:GetTeam() == TEAM_UNASSIGNED and Color(255, 255, 255) or team.GetColor(ent:GetTeam()))
+                local r, g, b = clr:Unpack()
+                local s = ent:GetRadius() * 2
+                cam.Start3D2D(pos, angle, 1)
+                    circle(s, r, g, b)
+                cam.End3D2D()
+                angle:RotateAroundAxis(angle:Forward(), 180)
+                cam.Start3D2D(pos, angle, 1)
+                    circle(s, r, g, b)
+                cam.End3D2D()
+                ent:SetColor(Color(r, g, b))
+            end
+        end)
     end
 end

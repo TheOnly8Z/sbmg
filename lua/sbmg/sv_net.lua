@@ -14,7 +14,7 @@ net.Receive("SBMG_Admin", function(len, ply)
     elseif mode == SBMG_NET_MODE_END then
         -- It's like ending but using timeout to check winner
         local tbl = SBMG:GetCurrentGameTable()
-        SBMG:MinigameEnd(tbl.Timeout and tbl:Timeout() or nil)
+        SBMG:MinigameEnd((tbl and tbl.Timeout) and tbl:Timeout() or nil)
     elseif mode == SBMG_NET_MODE_INTERRUPT then
         SBMG:MinigameEnd(false)
     end
